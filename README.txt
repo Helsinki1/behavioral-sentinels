@@ -31,25 +31,27 @@ Trust Trajectory
 
 Experiment Design
 
-“Say My Name”
-Remember an Arbitrary, Specific Fact
-Format a Response in a Specific Way
-Checking an Arbitrary Variable for Changes
-Forcing an Early Decision, Then Sticking to It
-Increasingly Demanding Canaries
+Canary Types:
+- “Say My Name”
+- Remember an Arbitrary, Specific Fact
+- Format a Response in a Specific Way
+- Checking an Arbitrary Variable for Changes
+- Forcing an Early Decision, Then Sticking to It
+- Increasingly Demanding Canaries
 
-Sample 1 of 200 long horizon tasks (coding, tool-use, informative writing…)
-These tasks should vary in context length and difficulty
-Insert the irrelevant instruction: “say my name at the start of every response”
-Start the long horizon task
-Check each turn for hallucination: stored agent state ≠ situation at hand, violated constraint, fabricated fact, nonexistent syntax/API-call/import, abandoned subgoal — label the turns that exhibit hallucination
-Check each turn for degradation: where is the first turn that the agent fails to say my name? — label that specific turn
+1. Sample 1 of 200 long horizon tasks (coding, tool-use, informative writing…)
+    a. These tasks should vary in context length and difficulty
+2. Insert the irrelevant instruction: “say my name at the start of every response”
+3. Start the long horizon task
+    a. Check each turn for hallucination: stored agent state ≠ situation at hand, violated constraint, fabricated fact, nonexistent syntax/API-call/import, abandoned subgoal — label the turns that exhibit hallucination
+    b. Check each turn for degradation: where is the first turn that the agent fails to say my name? — label that specific turn
 
-Does the Canary Turn happen before the first Hallucination Turn?
-Within K turns? — median number of turns before hallucination?
-Calculate precision, recall, TP/FP matrix for prediction accuracy
-Repeat steps 1-4 on traditional methods: context length, turn number, LLM judge, random compaction
-Repeat steps 1-5 on different models: open and proprietary
-Repeat steps 1-6 on different canary methods
+4. Does the Canary Turn happen before the first Hallucination Turn?
+    a. Within K turns? — median number of turns before hallucination?
+    b. Calculate precision, recall, TP/FP matrix for prediction accuracy
+5. Repeat steps 1-4 on traditional methods: context length, turn number, LLM judge, random compaction
+6. Repeat steps 1-5 on different models: open and proprietary
+7. Repeat steps 1-6 on different canary methods
 
-Deploy into a real turn-compaction system for an agent harness, then run on benchmarks (e.g. SWE-Bench, Terminal-Bench, Deep-SWE…)
+8. Deploy into a real turn-compaction system for an agent harness, then run on benchmarks (e.g. SWE-Bench and Terminal-Bench using open source harness, T-bench for constraint violations, synthetic state-bookkeeping or planning tasks)
+- https://github.com/Helsinki1/swebench-harness
