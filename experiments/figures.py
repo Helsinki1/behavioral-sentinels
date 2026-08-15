@@ -90,64 +90,60 @@ def load_runs(model, condition):
 
 
 # ------------------------------------------------------------------ fig 1
-def fig1():
-    fig, ax = plt.subplots(figsize=(8.6, 5.6))
-    fig.subplots_adjust(top=0.83, bottom=0.16, left=0.09, right=0.97)
-    sigs = CANARIES + ["turn_number", "LLM_judge", "context_length", "random_compaction"]
-    skipped = {m: [] for m in MODELS}
-    label_offsets = {  # (dx, dy, ha)
-        ("gpt-4o-mini", "variable_check"): (-4, -18, "right"),
-        ("gpt-4o-mini", "turn_number"): (0, 10, "center"),
-        ("gpt-4o-mini", "LLM_judge"): (10, -4, "left"),
-        ("gpt-4o-mini", "random_compaction"): (10, 4, "left"),
-        ("gpt-4o-mini", "context_length"): (10, 4, "left"),
-        ("gpt-4o-mini", "multi_resolution"): (10, -10, "left"),
-        ("gpt-oss-20b", "variable_check"): (10, 2, "left"),
-        ("gpt-oss-20b", "turn_number"): (2, -16, "left"),
-        ("gpt-oss-20b", "LLM_judge"): (10, -4, "left"),
-        ("gpt-oss-20b", "random_compaction"): (10, 2, "left"),
-        ("gpt-oss-20b", "context_length"): (10, 4, "left"),
-        ("gpt-oss-20b", "multi_resolution"): (8, -14, "left"),
-    }
-    for m in MODELS:
-        for sig in sigs:
-            met = load_metrics(sig, m, "5")
-            p, r = met["precision"], met["recall"]
-            if p is None:
-                skipped[m].append(sig)
-                continue
-            marker = "o" if sig in CANARIES else "s"
-            ax.scatter(r, p, s=90, color=MODEL_COLORS[m], marker=marker,
-                       edgecolors=SURFACE, linewidths=1.5, zorder=3)
-            off = label_offsets.get((m, sig))
-            if off:
-                ax.annotate(sig, (r, p), xytext=off[:2], textcoords="offset points",
-                            fontsize=8.5, color=INK2, ha=off[2])
-    style(ax)
+BAR_ORDER = ["say_my_name", "remember_fact", "format_response", "early_decision",
+             "multi_resolution", "variable_check",
+             "turn_number", "context_length", "LLM_judge", "random_compaction"]
+
+
+def _bar_panel(ax, m, metric):
+    # canary rows sit 0.9 higher, opening a gap for the group divider + header
+    ys = [len(BAR_ORDER) - 1 - i + (0.9 if sig in CANARIES else 0)
+          for i, sig in enumerate(BAR_ORDER)]
+    for y, sig in zip(ys, BAR_ORDER):
+        v = load_metrics(sig, m, "5")[metric]
+        if v is None:  # precision undefined: the signal never fired
+            ax.annotate("never fired", (0.015, y), fontsize=8.5, color=MUTED,
+                        va="center", style="italic")
+            continue
+        ax.barh(y, v, height=0.62, color=MODEL_COLORS[m],
+                edgecolor=SURFACE, linewidth=1)
+        ax.annotate(f"{v:.2f}", (v + 0.015, y), fontsize=8.5, color=INK2, va="center")
+    style(ax, ygrid=False)
     ax.grid(axis="x", color=GRID, linewidth=0.8)
-    ax.set_xlim(-0.03, 0.72)
-    ax.set_ylim(0.28, 1.06)
-    ax.set_xlabel("recall (share of hallucinating tasks predicted)")
-    ax.set_ylabel("precision (share of firings that were right)")
-    handles = [
-        Line2D([], [], marker="o", ls="", ms=9, mfc=MODEL_COLORS[m], mec=SURFACE,
-               label=MODEL_LABELS[m]) for m in MODELS
-    ] + [
-        Line2D([], [], marker="o", ls="", ms=8, mfc="#b7b5ae", mec=SURFACE, label="canary signal"),
-        Line2D([], [], marker="s", ls="", ms=8, mfc="#b7b5ae", mec=SURFACE, label="traditional signal"),
-    ]
-    ax.legend(handles=handles, loc="lower right", frameon=False, fontsize=8.5,
-              labelcolor=INK2)
-    title(fig, "Only the demanding canary competes with tuned traditional signals",
-          "Precision vs recall predicting the first hallucination within K=5 turns · 200 synthetic "
-          "state book-keeping tasks per point")
-    note = ("Not shown (never fired, precision undefined): gpt-4o-mini " +
-            ", ".join(skipped["gpt-4o-mini"]) + ".\n"
-            "The unlabeled gpt-oss-20b points at precision 1.0 are its four simple canaries "
-            "(recall ≤ 0.04).")
-    fig.text(0.02, 0.015, note, fontsize=8, color=MUTED)
-    fig.savefig(FIG_DIR / "fig1_precision_vs_recall.png", dpi=220)
+    ax.set_yticks(ys, BAR_ORDER)
+    ax.tick_params(axis="y", labelsize=9, labelcolor=INK2)
+    ax.set_xlim(0, 1.12)
+    ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0], ["0", "0.25", "0.5", "0.75", "1"])
+    ax.set_ylim(-0.6, len(BAR_ORDER) + 1.25)
+    # separator between the six canaries (top block) and four traditional signals
+    ax.axhline(3.95, color=BASELINE, linewidth=0.8)
+    for label, y, va in [("canaries", 10.35, "bottom"), ("traditional", 3.75, "top")]:
+        ax.annotate(label, xy=(-0.02, y), xycoords=("axes fraction", "data"),
+                    fontsize=8, color=MUTED, ha="right", va=va, style="italic")
+    ax.set_title(MODEL_LABELS[m], fontsize=10, color=INK2, loc="left")
+
+
+def _bar_figure(metric, fname, head, sub):
+    fig, axes = plt.subplots(1, 2, figsize=(9.6, 5.0))
+    fig.subplots_adjust(top=0.80, bottom=0.10, left=0.17, right=0.985, wspace=0.62)
+    for ax, m in zip(axes, MODELS):
+        _bar_panel(ax, m, metric)
+    title(fig, head, sub)
+    fig.savefig(FIG_DIR / fname, dpi=220)
     plt.close(fig)
+
+
+def fig1():
+    _bar_figure(
+        "precision", "fig1a_precision.png",
+        "When a canary fires, it is almost always right",
+        "Precision at K=5: of the tasks where the signal fired, how many really hallucinated "
+        "within 5 turns · 200 tasks per model")
+    _bar_figure(
+        "recall", "fig1b_recall.png",
+        "But only the demanding signals catch enough hallucinations",
+        "Recall at K=5: of the tasks that hallucinated, how many the signal predicted in time "
+        "· 200 tasks per model")
 
 
 # ------------------------------------------------------------------ fig 2
