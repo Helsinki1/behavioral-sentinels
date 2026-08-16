@@ -110,27 +110,44 @@ an agent renaming a function and then immediately calling it by its old name.
 ## Limitations
 
 1. **The `gpt-4o-mini` arm is incomplete.** The OpenAI account's
-   requests-per-day allowance (10,000, rolling 24h) was exhausted partway
-   through the run. `gpt-oss-20b` is complete (200 tasks × 7 conditions);
-   `gpt-4o-mini` completed only 3 of 7 conditions and is therefore excluded
-   from the scored tables, which require a paired task set across all
-   conditions. What it did produce corroborates the headline:
+   requests-per-day allowance (10,000 RPD on this tier) is a *rolling 24-hour*
+   window, and it was exhausted twice — once partway through the initial run
+   and again on the resume attempt ~3 hours later, before the first run's
+   requests had aged out. `gpt-oss-20b` is complete (200 tasks × 7 conditions);
+   `gpt-4o-mini` completed 3 of 7 conditions and is therefore excluded from the
+   scored tables, which require a paired task set across all conditions.
+
+   What it did produce corroborates the headline, and sharpens it:
 
    | condition | n | hallucination rate | canary fire rate |
    |---|---|---|---|
    | `rotating_prefix` | 200 | 0.775 | **0.000** |
    | `stochastic_policy` | 193 | 0.756 | 0.021 |
-   | `lagged_echo` | 42 | 0.976 | 0.024 |
+   | `lagged_echo` | 98 | 0.796 | 0.010 |
+   | `conditional_rule` | 3 | 0.667 | (n too small) |
 
-   `rotating_prefix` never fired on either model — 400 trajectories, zero
-   firings — so the central negative result is not model-specific.
+   `rotating_prefix` never fired on either model — **400 trajectories, zero
+   firings**, against a hallucination rate of ~0.78 — so the central negative
+   result is not model-specific.
 
-   To finish the arm once quota resets:
+   Note the *ordering* also differs by model: on `gpt-oss-20b`, `lagged_echo`
+   fired on 27% of trajectories; on `gpt-4o-mini` it fired on 1%. The
+   proprietary model is markedly more instruction-adherent, which means a
+   canary tuned to be informative on an open model may be too easy to be
+   informative on a stronger one. **Canary difficulty likely has to be
+   calibrated per model** — that is a hypothesis this partial data suggests
+   but does not establish, and it is the first thing the completed arm should
+   test.
+
+   To finish the arm once the rolling window clears (~24h after the last
+   burst), or immediately on a higher-tier key:
    ```bash
-   python -m experiments2.run_all2 --models gpt-4o-mini
+   python -m experiments2.run_all2 --limit 100 --models gpt-4o-mini
    python -m experiments2.figures2
    ```
-   The runner is resumable and skips everything already on disk.
+   The runner is resumable and skips everything already on disk. `--limit 100`
+   sizes the arm to fit one day's RPD allowance while leaving room for the
+   judge; the account tier, not the experiment, is the binding constraint.
 
 2. **The LLM judge ran on `gpt-oss-20b`, not `gpt-4o-mini`** as experiment 1
    did, for the same quota reason. The judge model is recorded in
