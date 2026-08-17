@@ -3,20 +3,20 @@
 Early-warning signals for hallucination onset in long-horizon LLM agents.
 
 The research design, taxonomy and motivation live in [`README.txt`](README.txt).
-This file indexes the two experiments in the repo.
+This file indexes the three experiments in the repo.
 
-| | **Experiment 1** | **Experiment 2** |
-|---|---|---|
-| question | can a task-irrelevant chore fire *before* a task hallucination? | does it matter whether the chore's answer **moves**? |
-| task | integer register book-keeping | **incremental Python coding** |
-| canaries | 6 **static** probes | 6 **dynamic** probes + 1 static control |
-| code | [`experiments/`](experiments/) | [`experiments2/`](experiments2/) |
-| data | `data/tasks.json` | `data2/tasks2.json` |
-| trajectories | `runs/` | `runs2/` |
-| results | [`results/SUMMARY.md`](results/SUMMARY.md) | [`results2/SUMMARY.md`](results2/SUMMARY.md) |
-| figures | `results/figures/` | `results2/figures/` |
-| write-up | — | [`README_EXPERIMENT2.md`](README_EXPERIMENT2.md), [`results2/FINDINGS.md`](results2/FINDINGS.md) |
-| headline | a task-irrelevant chore can fire before a task hallucination | a canary is only a sentinel if its answer **can't be copied from the model's own last reply** |
+| | **Experiment 1** | **Experiment 2** | **Experiment 3** |
+|---|---|---|---|
+| question | can a task-irrelevant chore fire *before* a task hallucination? | does it matter whether the chore's answer **moves**? | **which axis of strain** degrades first — and does it replicate across domains? |
+| task | integer register book-keeping | **incremental Python coding** | **three sets**: coding (exp-2 tasks), registers (exp-1 tasks), published **bAbI** stories |
+| canaries | 6 **static** probes | 6 **dynamic** probes + 1 static control | 7 **axis-isolating** probes + ensemble + controls |
+| code | [`experiments/`](experiments/) | [`experiments2/`](experiments2/) | [`experiments3/`](experiments3/) |
+| data | `data/tasks.json` | `data2/tasks2.json` | `data3/tasks3_*.json` |
+| trajectories | `runs/` | `runs2/` | `runs3/<set>/` |
+| results | [`results/SUMMARY.md`](results/SUMMARY.md) | [`results2/SUMMARY.md`](results2/SUMMARY.md) | `results3/SUMMARY.md` + `results3/<set>/` |
+| figures | `results/figures/` | `results2/figures/` | `results3/figures/<set>/` (the same 4 charts, once per set) |
+| write-up | — | [`README_EXPERIMENT2.md`](README_EXPERIMENT2.md), [`results2/FINDINGS.md`](results2/FINDINGS.md) | [`README_EXPERIMENT3.md`](README_EXPERIMENT3.md), [`results3/FINDINGS.md`](results3/FINDINGS.md) |
+| headline | a task-irrelevant chore can fire before a task hallucination | a canary is only a sentinel if its answer **can't be copied from the model's own last reply** | no single axis wins everywhere; a **3-probe ensemble** beats every cheap baseline on the non-saturated domains — and canaries **accelerate the failures they predict** (observer effect) |
 
 Both experiments use the **same two models** (`gpt-4o-mini` proprietary,
 `gpt-oss-20b` open via Fireworks), the **same N** (200 tasks), the **same
@@ -45,4 +45,8 @@ python -m experiments.figures
 python -m experiments2.selftest2   # validate checkers offline, no API calls
 python -m experiments2.run_all2    # experiment 2
 python -m experiments2.figures2
+
+python -m experiments3.selftest3   # validate all exp-3 checkers offline (3 task sets)
+python -m experiments3.run_all3    # experiment 3 (see README_EXPERIMENT3.md for flags)
+python -m experiments3.figures3
 ```
