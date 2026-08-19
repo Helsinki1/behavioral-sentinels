@@ -3,9 +3,26 @@
 Early-warning signals for hallucination onset in long-horizon LLM agents.
 
 The research design, taxonomy and motivation live in [`README.txt`](README.txt).
-This file indexes the four experiments in the repo.
+This file indexes the five experiments in the repo.
 
-## The four experiments
+## Experiment 5 — task-conditioned sentinel routing (latest)
+
+Experiments 1–4 deployed one blanket probe on every task. Experiment 5 routes
+instead: an LLM router classifies each task's dominant state demand (five-genre
+taxonomy) and attaches the one exp-3 probe matched to that failure mechanism —
+plus a **zero-carry** routed variant whose monitors read self-consistency off
+output the agent already produces. 11 arms × 90 mixed tasks (coding /
+registers / babi), deployment protocol (full horizon, end-task accuracy,
+budget-capped resets). Design: [`README_EXPERIMENT5.md`](README_EXPERIMENT5.md)
+· results: [`results5/SUMMARY.md`](results5/SUMMARY.md) ·
+[`results5/FINDINGS.md`](results5/FINDINGS.md). Headline: the zero-carry routed
+sentinel **matches the perfect-timing oracle** (0.817 accuracy at ~1 reset per
+task) and outscores clock, context, judge and random triggers pooled; routing
+beats blanket and anti-routed probes exactly where the assignment changes the
+probe; and in this regime the remaining bottleneck is compaction loss, not
+signal quality — even the oracle no longer beats never resetting.
+
+## The first four experiments
 
 |  | **Experiment 1** | **Experiment 2** | **Experiment 3** | **Experiment 4** |
 |---|---|---|---|---|
@@ -31,9 +48,13 @@ different reset policies at a matched intervention budget, with no early stop.
 
 ## State of the findings
 
-**No probe has ever beaten a clock.** Across four experiments, three task
-domains and 22 probe designs, "compact every N turns" matches or beats every
-behavioural sentinel tried. What the project has produced instead:
+**No *carried* probe has ever beaten a clock — but the zero-carry routed
+sentinel of experiment 5 finally does** (pooled point estimates over all four
+traditional triggers, significant vs clock and judge on coding, at the lowest
+intervention budget of any behavioural arm). Across the first four
+experiments, three task domains and 22 probe designs, "compact every N turns"
+matched or beat every bolted-on sentinel tried. What the project produced
+along the way:
 
 1. **A probe only fires if its answer cannot be copied from the model's own
    previous reply** (exp 2). `rotating_prefix` changes every single turn — the
@@ -85,8 +106,8 @@ affected — its probes induce a far smaller observer effect — and
 ## Models
 
 `gpt-4o-mini` (proprietary, OpenAI) and `gpt-oss-20b` (open, Fireworks).
-Experiment 1 ran both arms in full. Experiments 2–4 are `gpt-oss-20b`-complete;
-the `gpt-4o-mini` arm is partial in exp 2 and not yet run in exps 3–4, limited
+Experiment 1 ran both arms in full. Experiments 2–5 are `gpt-oss-20b`-complete;
+the `gpt-4o-mini` arm is partial in exp 2 and not yet run in exps 3–5, limited
 by the OpenAI account's rolling requests-per-day allowance. Experiment 2 found
 probe difficulty does **not** transfer across models (a probe firing on 27% of
 `gpt-oss-20b` trajectories fired on 1% of `gpt-4o-mini`'s), so the cross-model
@@ -116,16 +137,29 @@ python -m experiments4.run_all4 --gate   # A, C, F only — the go/no-go gate
 python -m experiments4.run_all4          # all six arms
 python -m experiments4.metrics4
 python -m experiments4.figures4
+
+# experiment 5 — deployment: routed + zero-carry sentinels, mixed pool
+python -m experiments5.selftest5         # offline, mock LLM, all arms
+python -m experiments5.run_all5          # all eleven arms
+python -m experiments5.metrics5
+python -m experiments5.figures5
 ```
 
 Every runner is resumable and skips trajectories already on disk.
 
 ## What would move this forward
 
-1. **A second model on experiments 2–4.** The single-model limitation is the
-   biggest hole, and exp 2 already showed the effect is model-dependent.
-2. **Experiment 4 at n ≈ 200.** At n=40 the sentinel contrasts all cross zero;
-   the design can rule out a large benefit, not a small one.
-3. **A zero-carry-cost signal** — self-inconsistency in the agent's own task
-   output. Point 4 above says this is the only remaining direction with a
-   ceiling worth chasing.
+1. **Better compaction, not better signals.** Experiment 5 put a free signal
+   at oracle-level timing and found the oracle itself no longer beats never
+   resetting — the loss is in the snapshot operator now. Hybrid snapshots
+   (schema + verbatim recent tail), external state checkpoints, and
+   selective compaction are the candidates.
+2. **A second model on experiments 2–5.** The single-model limitation is the
+   biggest hole, and exp 2 already showed the effect is model-dependent
+   (`gpt-4o-mini` arms are scaffolded everywhere, rolling-RPD-limited).
+3. **Experiment 5 at n ≈ 400.** The pooled Z_routed contrasts are +0.002 to
+   +0.021 with CIs of ±0.03; the per-domain anchors are significant but the
+   pooled ranking is not yet.
+4. **An unseen genre.** The router's taxonomy is open-ended, but every genre
+   tested so far had an exp-3-screened probe waiting. A spatial or
+   plan-tracking task family would test routing where no probe was tuned.
