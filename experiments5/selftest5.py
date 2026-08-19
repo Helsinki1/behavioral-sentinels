@@ -233,6 +233,10 @@ def unit_tests():
     check("probe_for routed", probe_for("routed", "coding", "lag_span") == "lag_span")
     check("probe_for blanket", probe_for("blanket", "babi", None) == "staircase")
     check("probe_for rotated", probe_for("rotated", "registers", None) == "lag_span")
+    check("probe_for labeled coding", probe_for("labeled", "coding", None) == "staircase")
+    check("probe_for labeled registers",
+          probe_for("labeled", "registers", None) == "chain_checksum")
+    check("probe_for labeled babi", probe_for("labeled", "babi", None) == "lag_span")
     check("genre map covers 5 genres", len(GENRE_TO_PROBE) == 5)
 
 
@@ -335,6 +339,10 @@ def integration(tmp):
     for key, r in recs["D_rotated"].items():
         check(f"D_rotated {key}: condition is the rotated probe",
               r["condition"] == config5.ROTATED_TABLE[key[0]], r["condition"])
+    for key, r in recs["D_labeled"].items():
+        check(f"D_labeled {key}: condition is the intended-genre probe",
+              r["condition"] == routing5.GENRE_TO_PROBE[
+                  config5.INTENDED_GENRE[key[0]]], r["condition"])
     for key, r in recs["C_prime_routed"].items():
         check(f"C_prime_routed {key}: carries routed probe, clock resets",
               r["condition"] in routing5.GENRE_TO_PROBE.values()
@@ -352,6 +360,30 @@ def integration(tmp):
     check("metrics: pooled over all tasks", out["n_tasks"] == n_expected)
     check("metrics: routing contrasts present",
           any("anti-routing" in c["contrast"] for c in out["contrasts"]))
+    check("metrics: router-noise contrast present",
+          any("router noise" in c["contrast"] for c in out["contrasts"]))
+
+    # prediction layer runs on the same files, no LLM calls
+    from . import prediction5
+    calls_before = dict(mock.calls)
+    pred = prediction5.compute("gpt-oss-20b")
+    check("prediction: made no LLM calls", mock.calls == calls_before)
+    check("prediction: every declared set present",
+          set(pred["sets"]) == set(prediction5.SET_SIGNALS), str(set(pred["sets"])))
+    check("prediction: baselines re-scored on every set",
+          all({"turn_number", "context_length", "random (expected)"}
+              <= set(e["signals"]) for e in pred["sets"].values()))
+    zc = pred["sets"]["A_no_reset"]["signals"]["zero-carry monitor"]
+    check("prediction: zero-carry catches scripted failures (pooled recall)",
+          (zc["pooled"]["recall"] or 0) >= 0.5, str(zc["pooled"]))
+    check("prediction: zero-carry perfect on babi (scripted garble)",
+          zc["by_domain"]["babi"]["recall"] == 1.0, str(zc["by_domain"]["babi"]))
+    check("prediction: A_no_reset segments never truncated",
+          pred["sets"]["A_no_reset"]["share_truncated_by_reset"] == 0.0)
+    check("prediction: D_routed marked self-censored",
+          pred["sets"]["D_routed"]["self_triggered_signal"] == "routed probe")
+    check("prediction: report written",
+          (config5.RESULTS_DIR / "PREDICTION.md").exists())
 
 
 def main():

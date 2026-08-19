@@ -3,6 +3,8 @@
 fig1  accuracy vs resets/task: every arm on the cost/benefit plane, pooled
 fig2  per-domain accuracy by arm (grouped bars): where routing pays
 fig3  the routing decomposition: carrying cost vs timing value vs zero-carry
+fig4  precision/recall plane per domain, signals scored on same trajectories
+fig5  lead-time distributions where signals fire before the failure
 """
 import json
 
@@ -20,6 +22,7 @@ ARM_STYLE = {
     "C_judge":        ("LLM judge", "#9467bd", "X"),
     "C_prime_routed": ("clock + carried probe", "#aec7e8", "s"),
     "D_routed":       ("ROUTED sentinel", "#d62728", "*"),
+    "D_labeled":      ("labeled routing", "#ff7f0e", "h"),
     "D_blanket":      ("blanket probe", "#ff9896", "D"),
     "D_rotated":      ("anti-routed probe", "#e377c2", "d"),
     "Z_routed":       ("ZERO-CARRY routed", "#2ca02c", "*"),
@@ -71,6 +74,7 @@ def fig3(m):
         ("C_prime_routed - C_clock", "carrying cost\n(routed probe)"),
         ("D_routed - C_prime_routed", "timing value\n(routed probe)"),
         ("D_routed - C_clock", "routed sentinel\nnet vs clock"),
+        ("D_labeled - D_routed", "router noise cost\n(labeled - LLM router)"),
         ("Z_routed - C_clock", "zero-carry routed\nnet vs clock"),
         ("F_oracle - C_clock", "perfect timing\n(headroom)"),
     ]
@@ -96,12 +100,106 @@ def fig3(m):
     fig.savefig(RESULTS_DIR / "figures" / "fig3_decomposition.png", dpi=160)
 
 
+# --------------------------------------------------- prediction-layer figures
+# (set, signal display name) -> plot style; routed signals drawn as big stars
+PRED_POINTS = [
+    ("A_no_reset", "zero-carry monitor", "zero-carry monitor (A_no_reset)",
+     "#2ca02c", "*", True),
+    ("C_prime_routed", "routed probe", "routed probe (C′, clock-segmented)",
+     "#d62728", "*", True),
+    ("D_routed", "routed probe", "routed probe (D_routed, self-censored)",
+     "#d62728", "o", False),
+    ("D_labeled", "labeled probe", "labeled probe (D_labeled, self-censored)",
+     "#ff7f0e", "h", False),
+    ("C_judge", "LLM judge", "LLM judge (C_judge, self-censored)",
+     "#9467bd", "X", False),
+    ("A_no_reset", "turn_number", "turn number (best F1)", "#1f77b4", "s", False),
+    ("A_no_reset", "context_length", "context length (best F1)",
+     "#17becf", "P", False),
+    ("A_no_reset", "random (expected)", "random (expected)", "#b0b0b0", "v", False),
+]
+
+
+def _pred_metric(p, arm, signal, domain):
+    e = p["sets"].get(arm)
+    if not e or signal not in e["signals"]:
+        return None
+    if domain is None:
+        return e["signals"][signal]["pooled"]
+    return e["signals"][signal]["by_domain"].get(domain)
+
+
+def fig4(p):
+    fig, axes = plt.subplots(1, len(DOMAINS), figsize=(12.5, 4.4),
+                             sharex=True, sharey=True)
+    for ax, domain in zip(axes, DOMAINS):
+        for arm, sig, label, color, marker, routed in PRED_POINTS:
+            m = _pred_metric(p, arm, sig, domain)
+            if not m or m["precision"] is None or m["recall"] is None:
+                continue
+            ax.scatter(m["recall"], m["precision"], s=300 if routed else 110,
+                       c=color, marker=marker, edgecolors="black",
+                       linewidths=0.6, zorder=3,
+                       label=label if domain == DOMAINS[0] else None)
+        ax.set_title(domain)
+        ax.set_xlabel("recall")
+        ax.set_xlim(-0.04, 1.04)
+        ax.set_ylim(-0.04, 1.04)
+        ax.grid(alpha=0.3)
+    axes[0].set_ylabel("precision")
+    fig.suptitle(f"Predicting the first failure within K={p['K']} turns — "
+                 "each signal scored on its own arm's pre-reset segments, "
+                 "baselines re-scored per set", fontsize=10)
+    fig.legend(fontsize=8, loc="lower center", ncols=4,
+               bbox_to_anchor=(0.5, -0.02))
+    fig.tight_layout(rect=(0, 0.08, 1, 1))
+    fig.savefig(RESULTS_DIR / "figures" / "fig4_precision_recall.png", dpi=160,
+                bbox_inches="tight")
+
+
+def fig5(p):
+    rows = []
+    for arm, sig, label, color, marker, routed in PRED_POINTS:
+        m = _pred_metric(p, arm, sig, None)
+        if m and m.get("leads"):
+            rows.append((label, color, m["leads"]))
+    if not rows:
+        print("fig5 skipped: no lead-time data")
+        return
+    fig, ax = plt.subplots(figsize=(8.2, 0.62 * len(rows) + 1.8))
+    bp = ax.boxplot([r[2] for r in rows], vert=False, patch_artist=True,
+                    widths=0.55, showfliers=True,
+                    medianprops={"color": "black"})
+    for patch, (_, color, _) in zip(bp["boxes"], rows):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.6)
+    for y, (_, _, leads) in enumerate(rows, start=1):
+        ax.text(max(leads) + 0.35, y, f"n={len(leads)}", va="center",
+                fontsize=8, color="#444444")
+    ax.set_yticks(range(1, len(rows) + 1))
+    ax.set_yticklabels([r[0] for r in rows], fontsize=9)
+    ax.set_xlabel("lead time (turns between first fire and first failure, "
+                  "fires at/before the failure only)")
+    ax.set_title("Where signals fire early: lead-time distributions, pooled",
+                 fontsize=10)
+    ax.grid(axis="x", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(RESULTS_DIR / "figures" / "fig5_lead_time.png", dpi=160)
+
+
 def main():
-    m = json.loads((RESULTS_DIR / "metrics.json").read_text())
     (RESULTS_DIR / "figures").mkdir(parents=True, exist_ok=True)
+    m = json.loads((RESULTS_DIR / "metrics.json").read_text())
     fig1(m)
     fig2(m)
     fig3(m)
+    pred = RESULTS_DIR / "prediction.json"
+    if pred.exists():
+        p = json.loads(pred.read_text())
+        fig4(p)
+        fig5(p)
+    else:
+        print("fig4/fig5 skipped: run experiments5.prediction5 first")
     print("figures written to", RESULTS_DIR / "figures")
 
 

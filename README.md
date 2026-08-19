@@ -15,12 +15,19 @@ output the agent already produces. 11 arms × 90 mixed tasks (coding /
 registers / babi), deployment protocol (full horizon, end-task accuracy,
 budget-capped resets). Design: [`README_EXPERIMENT5.md`](README_EXPERIMENT5.md)
 · results: [`results5/SUMMARY.md`](results5/SUMMARY.md) ·
-[`results5/FINDINGS.md`](results5/FINDINGS.md). Headline: the zero-carry routed
-sentinel **matches the perfect-timing oracle** (0.817 accuracy at ~1 reset per
-task) and outscores clock, context, judge and random triggers pooled; routing
-beats blanket and anti-routed probes exactly where the assignment changes the
-probe; and in this regime the remaining bottleneck is compaction loss, not
-signal quality — even the oracle no longer beats never resetting.
+[`results5/FINDINGS.md`](results5/FINDINGS.md) ·
+[`results5/PREDICTION.md`](results5/PREDICTION.md). Headline: the zero-carry
+routed sentinel **matches the perfect-timing oracle** (0.817 accuracy at ~1
+reset per task) and outscores clock, context, judge and random triggers
+pooled; routing beats blanket and anti-routed probes exactly where the
+assignment changes the probe; and in this regime the remaining bottleneck is
+compaction loss, not signal quality — even the oracle no longer beats never
+resetting. Two follow-ups sharpen the mechanism: a deterministic pre-labeled
+arm (`D_labeled`) shows the LLM router's noise costs nothing (−0.005 vs
+`D_routed`, ns), and a same-trajectory prediction layer shows the zero-carry
+signal's edge is **precision** (0.78 vs 0.60 turn-count / 0.46 context /
+0.46 random on identical trajectories) — the property that matters when
+every reset risks compaction loss.
 
 ## The first four experiments
 
@@ -140,8 +147,9 @@ python -m experiments4.figures4
 
 # experiment 5 — deployment: routed + zero-carry sentinels, mixed pool
 python -m experiments5.selftest5         # offline, mock LLM, all arms
-python -m experiments5.run_all5          # all eleven arms
+python -m experiments5.run_all5          # all twelve arms
 python -m experiments5.metrics5
+python -m experiments5.prediction5       # same-trajectory precision/recall
 python -m experiments5.figures5
 ```
 

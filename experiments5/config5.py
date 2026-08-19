@@ -81,7 +81,9 @@ JUDGE_MODEL = "gpt-oss-20b"        # same family as exp-2's strongest judge run
 JUDGE_WINDOW = 8
 
 # ---------------------------------------------------------------- the arms
-#   probe: "none" | "routed" | "blanket" | "rotated" -> what instruction is carried
+#   probe: "none" | "routed" | "labeled" | "blanket" | "rotated" -> what is carried
+#          ("labeled" = deterministic pre-labeled routing straight from
+#           INTENDED_GENRE, no router call: the router-noise-free upper bound)
 #   policy: what decides a reset
 ARMS = {
     "A_no_reset":     {"policy": "none",      "probe": "none"},
@@ -91,6 +93,7 @@ ARMS = {
     "C_judge":        {"policy": "judge",     "probe": "none"},
     "C_prime_routed": {"policy": "scheduled", "probe": "routed"},
     "D_routed":       {"policy": "probe",     "probe": "routed"},
+    "D_labeled":      {"policy": "probe",     "probe": "labeled"},
     "D_blanket":      {"policy": "probe",     "probe": "blanket"},
     "D_rotated":      {"policy": "probe",     "probe": "rotated"},
     "Z_routed":       {"policy": "zerocarry", "probe": "none"},
@@ -103,7 +106,7 @@ GATE_ARMS = ["A_no_reset", "C_clock", "D_routed"]
 # dependency order for a full run
 ARM_ORDER = ["A_no_reset", "C_clock", "D_routed", "Z_routed", "C_ctx",
              "C_judge", "C_prime_routed", "D_blanket", "D_rotated",
-             "B_random", "F_oracle"]
+             "D_labeled", "B_random", "F_oracle"]
 
 SCHEDULE_EVERY = 6       # clock cadence (exp-4 continuity)
 SCHEDULE_FIRST = 6
@@ -123,7 +126,8 @@ BLANKET_PROBE = "staircase"   # the exp-2/4 escalating-ledger axis, everywhere
 ROTATED_TABLE = {"coding": "chain_checksum", "registers": "lag_span",
                  "babi": "staircase"}
 
-# what the router SHOULD say (used only to score the router, never to route)
+# what the router SHOULD say; scores the router, and drives the D_labeled arm
+# (deterministic routing) -- the LLM-routed arms never read it
 INTENDED_GENRE = {"coding": "ARTIFACT_ACCUMULATION",
                   "registers": "UPDATE_APPLICATION",
                   "babi": "RETRIEVAL_DISTANCE"}

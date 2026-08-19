@@ -22,6 +22,7 @@ every resetting arm.
 | C_judge | judge | none | 0.799 | 0.478 | 4.57 | 37,123 |
 | C_prime_routed | scheduled | routed | 0.778 | 0.289 | 3.27 | 23,327 |
 | D_routed | probe | routed | 0.791 | 0.400 | 4.30 | 26,364 |
+| D_labeled | probe | labeled | 0.786 | 0.311 | 4.39 | 26,246 |
 | D_blanket | probe | blanket | 0.774 | 0.333 | 4.87 | 24,558 |
 | D_rotated | probe | rotated | 0.780 | 0.367 | 4.94 | 26,234 |
 | Z_routed | zerocarry | none | 0.817 | 0.478 | 1.09 | 20,508 |
@@ -38,6 +39,7 @@ every resetting arm.
 | C_judge | 0.810 | 0.964 | 0.623 |
 | C_prime_routed | 0.779 | 0.917 | 0.639 |
 | D_routed | 0.813 | 0.929 | 0.630 |
+| D_labeled | 0.811 | 0.913 | 0.634 |
 | D_blanket | 0.844 | 0.901 | 0.576 |
 | D_rotated | 0.842 | 0.916 | 0.583 |
 | Z_routed | 0.890 | 0.932 | 0.629 |
@@ -57,6 +59,9 @@ every resetting arm.
 | Z_routed - A_no_reset: zero-carry routed vs never resetting | -0.0059 | [-0.031, +0.019] | no | 31/35/24 |
 | D_routed - D_blanket: ROUTING vs blanket probe (exp-1..4 approach) | +0.0172 | [-0.011, +0.046] | no | 45/34/11 |
 | D_routed - D_rotated: ROUTING vs mis-assigned probes (anti-routing) | +0.0107 | [-0.019, +0.040] | no | 39/34/17 |
+| D_labeled - D_routed: LABELED routing vs LLM router (router noise cost) | -0.0048 | [-0.030, +0.020] | no | 32/37/21 |
+| D_labeled - C_clock: labeled-routed sentinel vs turn-count clock | -0.0103 | [-0.037, +0.018] | no | 33/38/19 |
+| D_labeled - D_rotated: labeled routing vs mis-assigned probes | +0.0059 | [-0.023, +0.035] | no | 37/33/20 |
 | C_prime_routed - C_clock: carrying cost of the routed probe | -0.0182 | [-0.049, +0.010] | no | 34/37/19 |
 | D_routed - C_prime_routed: timing value of the routed probe | +0.0127 | [-0.021, +0.047] | no | 41/32/17 |
 | C_clock - A_no_reset: does clock resetting help at all | -0.0264 | [-0.053, -0.001] | **yes** | 26/42/22 |
@@ -82,6 +87,12 @@ every resetting arm.
 | coding | D_routed - D_rotated | -0.0296 | [-0.097, +0.039] | no |
 | registers | D_routed - D_rotated | +0.0136 | [-0.030, +0.056] | no |
 | babi | D_routed - D_rotated | +0.0479 | [+0.014, +0.086] | **yes** |
+| coding | D_labeled - D_routed | -0.0017 | [-0.061, +0.055] | no |
+| registers | D_labeled - D_routed | -0.0166 | [-0.041, +0.009] | no |
+| babi | D_labeled - D_routed | +0.0040 | [-0.036, +0.042] | no |
+| coding | D_labeled - C_clock | -0.0229 | [-0.084, +0.039] | no |
+| registers | D_labeled - C_clock | -0.0428 | [-0.069, -0.016] | **yes** |
+| babi | D_labeled - C_clock | +0.0347 | [-0.007, +0.077] | no |
 | coding | C_prime_routed - C_clock | -0.0551 | [-0.131, +0.010] | no |
 | registers | C_prime_routed - C_clock | -0.0384 | [-0.066, -0.012] | **yes** |
 | babi | C_prime_routed - C_clock | +0.0390 | [-0.002, +0.080] | no |

@@ -13,9 +13,10 @@ never resetting at all (−0.006, ns), and the clock is now **significantly
 worse than doing nothing** (−0.026, CI [−0.053, −0.001]).
 
 Model `gpt-oss-20b`, 90 tasks (30 coding / 30 registers / 30 babi,
-difficulty-stratified), 11 arms paired on every task, full horizon, validated
+difficulty-stratified), 12 arms paired on every task, full horizon, validated
 structured compaction snapshots, identical 6-reset cap everywhere. Full
-tables in [`SUMMARY.md`](SUMMARY.md).
+tables in [`SUMMARY.md`](SUMMARY.md); same-trajectory prediction metrics in
+[`PREDICTION.md`](PREDICTION.md).
 
 ## 1. The router works, and routing is real signal engineering
 
@@ -40,6 +41,16 @@ noise floor of two independent runs of a near-identical configuration. So:
 holding everything else fixed** — the deployment-side confirmation of
 experiment 3's screening result.
 
+**And the router's noise costs nothing.** The `D_labeled` arm replaces the
+LLM router with the ground-truth genre label (a deterministic table lookup,
+zero router calls) and is otherwise identical to `D_routed`. Despite the
+router mislabeling 9/90 tasks, perfect labels buy no accuracy:
+`D_labeled − D_routed` = −0.005 (CI [−0.030, +0.020]; per-domain −0.002
+coding / −0.017 registers / +0.004 babi — all noise). A one-call LLM
+classifier reading only the briefing is already as good as an oracle
+labeler on this pool, so whatever the carried routed sentinel still loses
+(§2), none of it is router error.
+
 ## 2. Carried probes are much cheaper than exp 4's, but still not free
 
 The routed probe is one output line. Its ledger, versus exp 4's blanket
@@ -55,7 +66,11 @@ Routing turned the timing information from worthless to mildly positive and
 halved the carrying cost, moving the carried sentinel from clearly losing to
 statistical parity with the clock. But it still cannot beat a probe-free
 baseline pooled, because the carrying cost eats the timing value — the same
-conclusion exp 4 reached, now at a finer resolution.
+conclusion exp 4 reached, now at a finer resolution. The `D_labeled` arm
+closes the last escape hatch: even with a noise-free router the carried
+sentinel does not beat the clock (`D_labeled − C_clock` = −0.010 ns pooled,
+significantly negative on registers at −0.043). The carried design's
+ceiling is set by the carrying cost, not by routing quality.
 
 ## 3. The zero-carry routed sentinel is the design that works
 
@@ -104,7 +119,47 @@ itself.** Resets do still pay in cost — the clock cuts prompt tokens 14%,
 `C_ctx` 18% — so the practical frontier is accuracy-per-token, where
 `Z_routed` and `C_ctx` are the two Pareto points among non-oracle arms.
 
-## 5. What this means for the project
+## 5. Routing's prediction edge is precision — measured on identical trajectories
+
+The deployment tables above say which arm wins; they don't say *why* the
+zero-carry signal wins. The prediction layer
+([`PREDICTION.md`](PREDICTION.md), no new API calls) re-scores every signal —
+and the turn-number / context-length / random baselines — on **one trajectory
+set at a time** (pre-first-reset segments, first fire vs first failure,
+TP within K=5 turns), so the exp-3 pitfall of grading each signal on its own
+observer-effect-shifted trajectories is handled by construction. On the
+full-horizon `A_no_reset` trajectories, the cleanest set:
+
+| signal (same 90 trajectories) | precision | recall | F1 | fire rate |
+|---|---|---|---|---|
+| zero-carry monitor | **0.783** | 0.261 | 0.391 | 0.622 |
+| turn number (best F1, th=5) | 0.596 | 0.449 | **0.512** | 1.000 |
+| context length (best F1, th=1000) | 0.462 | 0.261 | 0.333 | 0.989 |
+| random (expected) | 0.458 | 0.257 | 0.329 | 1.000 |
+
+The monitor's edge is **precision, not recall**: per domain it fires cleanly
+(coding 0.643, registers 1.000, babi 1.000 precision) but catches only a
+quarter of first failures within the 5-turn window, so on the F1 metric
+experiments 1–3 optimized, the turn-5 clock still "wins". Deployment inverts
+that ranking — and the prediction table explains why: when every reset risks
+compaction loss (§4), a signal's *false* fires are what cost accuracy, so
+the precision column, not F1, is what transfers to deployment value.
+`Z_routed` wins by firing rarely and almost only on real degradation; its
+low within-K recall barely matters because an uncaught first slip is usually
+followed by more slips the monitor does catch.
+
+Lead times confirm the monitors are reactive, as designed: median lead 0
+(fig5) with a tail out to 7 turns — they flag the slip, not the future. The
+carried probes' apparent timing information, meanwhile, does not survive the
+same-trajectory test: where the probe itself triggers the reset its lead is
+right-censored by construction (marked ✂ in the tables), and on
+`C_prime_routed`, where the clock ends segments and the probe fires freely,
+the routed probe's precision is 0.087 pooled — below every baseline on those
+same segments. The prediction data thus lands on the same verdict as the
+deployment data, by an independent route: the value in exp 5 is the
+high-precision zero-carry signal, not carried-probe clairvoyance.
+
+## 6. What this means for the project
 
 1. **The goal line is met on point estimates, and honestly caveated.**
    `Z_routed` outscores turn count, context length, LLM judge and random
@@ -114,9 +169,13 @@ itself.** Resets do still pay in cost — the clock cuts prompt tokens 14%,
    the traditionals", not "significantly beats every baseline everywhere".
 2. **Sentinel design rules, final form:** (i) non-copyable, (ii) matched to
    the task's dominant failure mechanism (routing — worth +0.01–0.05
-   depending on how wrong the default probe was), (iii) zero carrying cost —
-   read off work the agent already does. Rule (iii) dominates: it converts
-   the entire observer-effect literature of exps 3–4 from a tax into zero.
+   depending on how wrong the default probe was; a one-call LLM router
+   suffices, since perfect labels add nothing — `D_labeled`), (iii) zero
+   carrying cost — read off work the agent already does. Rule (iii)
+   dominates: it converts the entire observer-effect literature of exps 3–4
+   from a tax into zero. And per §5, judge a sentinel by its **precision**,
+   not its F1 — precision is the property that survives contact with a
+   lossy intervention.
 3. **Next lever: compaction quality, not signal quality.** With signal ≈
    oracle, every remaining point of loss is the operator. Candidates: hybrid
    snapshots (validated schema + verbatim tail of recent turns), domain

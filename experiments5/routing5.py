@@ -3,8 +3,10 @@ ONE probe that stresses the same failure mechanism.
 
 Two layers, both routed by the same genre taxonomy:
 
-  CARRIED probes (routed / blanket / rotated arms) -- the exp-3 axis probes,
-  chosen per task by an LLM router that reads only the task briefing. The
+  CARRIED probes (routed / labeled / blanket / rotated arms) -- the exp-3
+  axis probes, chosen per task by an LLM router that reads only the task
+  briefing (or, in the labeled arm, deterministically from the intended
+  domain->genre label, pricing the router's noise by contrast). The
   router is part of the measured system: its label is used verbatim, its
   mistakes are not corrected, and its agreement with the intended mapping is
   reported separately.
@@ -33,7 +35,7 @@ import re
 from experiments3.canaries3 import build_first_user_message
 
 from experiments.llm import chat
-from .config5 import BLANKET_PROBE, ROTATED_TABLE
+from .config5 import BLANKET_PROBE, INTENDED_GENRE, ROTATED_TABLE
 
 GENRE_TO_PROBE = {
     "ARTIFACT_ACCUMULATION": "staircase",
@@ -97,6 +99,8 @@ def probe_for(arm_probe, domain, routed_probe):
         return "baseline"
     if arm_probe == "routed":
         return routed_probe
+    if arm_probe == "labeled":
+        return GENRE_TO_PROBE[INTENDED_GENRE[domain]]
     if arm_probe == "blanket":
         return BLANKET_PROBE
     if arm_probe == "rotated":

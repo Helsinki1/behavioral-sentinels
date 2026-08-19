@@ -20,8 +20,8 @@ from .config5 import (ARMS, DOMAINS, INTENDED_GENRE, N_PER_DOMAIN,
 from .run_all5 import load_arm, load_router, select_tasks
 
 ARM_DISPLAY = ["A_no_reset", "B_random", "C_clock", "C_ctx", "C_judge",
-               "C_prime_routed", "D_routed", "D_blanket", "D_rotated",
-               "Z_routed", "F_oracle"]
+               "C_prime_routed", "D_routed", "D_labeled", "D_blanket",
+               "D_rotated", "Z_routed", "F_oracle"]
 
 CONTRAST_PAIRS = [
     ("D_routed", "C_clock", "routed sentinel vs turn-count clock"),
@@ -34,6 +34,9 @@ CONTRAST_PAIRS = [
     ("Z_routed", "A_no_reset", "zero-carry routed vs never resetting"),
     ("D_routed", "D_blanket", "ROUTING vs blanket probe (exp-1..4 approach)"),
     ("D_routed", "D_rotated", "ROUTING vs mis-assigned probes (anti-routing)"),
+    ("D_labeled", "D_routed", "LABELED routing vs LLM router (router noise cost)"),
+    ("D_labeled", "C_clock", "labeled-routed sentinel vs turn-count clock"),
+    ("D_labeled", "D_rotated", "labeled routing vs mis-assigned probes"),
     ("C_prime_routed", "C_clock", "carrying cost of the routed probe"),
     ("D_routed", "C_prime_routed", "timing value of the routed probe"),
     ("C_clock", "A_no_reset", "does clock resetting help at all"),
@@ -194,7 +197,8 @@ def write_summary(out):
     L += ["", "## Key contrasts per domain", "",
           "| domain | contrast | delta | 95% CI | sig |", "|---|---|---|---|---|"]
     keep = {("D_routed", "C_clock"), ("D_routed", "D_rotated"),
-            ("D_routed", "D_blanket"), ("Z_routed", "C_clock"),
+            ("D_routed", "D_blanket"), ("D_labeled", "D_routed"),
+            ("D_labeled", "C_clock"), ("Z_routed", "C_clock"),
             ("Z_routed", "C_judge"), ("C_prime_routed", "C_clock"),
             ("F_oracle", "C_clock")}
     for c in out["contrasts_by_domain"]:

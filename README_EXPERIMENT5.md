@@ -78,6 +78,7 @@ post-reset grace for behavioural triggers, all arms paired over the same
 | `C_judge` | LLM judge (window 8) says degraded | — |
 | `C_prime_routed` | clock | routed probe |
 | `D_routed` | routed probe fails | routed probe |
+| `D_labeled` | pre-labeled probe fails (deterministic `INTENDED_GENRE` lookup, no router call) | labeled probe |
 | `D_blanket` | blanket probe fails (`staircase` everywhere — the exp-1..4 design) | blanket probe |
 | `D_rotated` | deliberately mis-assigned probe fails (coding→`chain_checksum`, registers→`lag_span`, babi→`staircase`) | rotated probe |
 | `Z_routed` | routed zero-carry monitor fires | **nothing** |
@@ -87,7 +88,10 @@ The routing claim is controlled twice: `D_blanket` (does routing beat the
 old one-probe-everywhere design?) and `D_rotated` (same three probes, same
 load, only the *assignment* scrambled — if routing is real,
 `D_routed > D_rotated`). `C_prime_routed` isolates the carrying cost of the
-routed probe from the value of its timing, as in exp 4.
+routed probe from the value of its timing, as in exp 4. `D_labeled` prices
+the router itself: it is `D_routed` with the LLM router replaced by the
+ground-truth genre label, so `D_labeled − D_routed` is the accuracy the
+router's noise costs.
 
 ## Compaction
 
@@ -103,18 +107,33 @@ ground truth is ever injected; a failed snapshot keeps the original context.
 The project's goal line: a sentinel-triggered system that beats turn count,
 context length, LLM judge and random resets on end-task accuracy. Secondary
 questions, answerable regardless: does routing beat blanket and rotated
-probes (the routing claim itself), and does the zero-carry variant finally
-escape the observer effect that killed exp 4's sentinel?
+probes (the routing claim itself), does the zero-carry variant finally
+escape the observer effect that killed exp 4's sentinel, and — via
+`D_labeled` — how much of the routed sentinel's remaining deficit is the
+router's own noise?
 
 ## Run
 
 ```bash
 python -m experiments5.selftest5          # offline, mock LLM, all arms
 python -m experiments5.run_all5 --gate    # A, C_clock, D_routed
-python -m experiments5.run_all5           # all eleven arms
+python -m experiments5.run_all5           # all twelve arms
 python -m experiments5.metrics5           # results5/SUMMARY.md + metrics.json
+python -m experiments5.prediction5        # results5/PREDICTION.md (no API calls)
 python -m experiments5.figures5           # results5/figures/
 ```
 
+## The prediction layer
+
+`prediction5.py` asks the exp-1..3 question — precision/recall of each
+signal at predicting the first failure within K=5 turns — but re-scored on
+**one trajectory set at a time**, with turn-number / context-length / random
+thresholds re-tuned on that same set, so signals are never compared across
+observer-effect-shifted distributions (the exp-3 pitfall, handled by
+construction). Scoring unit is the pre-first-reset segment of each
+trajectory; where a set's own signal triggers the reset its lead time is
+right-censored, and the report says so per table. No new API calls.
+
 Results: [`results5/SUMMARY.md`](results5/SUMMARY.md) ·
-[`results5/FINDINGS.md`](results5/FINDINGS.md)
+[`results5/FINDINGS.md`](results5/FINDINGS.md) ·
+[`results5/PREDICTION.md`](results5/PREDICTION.md)
