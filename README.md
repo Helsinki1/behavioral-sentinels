@@ -3,9 +3,29 @@
 Early-warning signals for hallucination onset in long-horizon LLM agents.
 
 The research design, taxonomy and motivation live in [`README.txt`](README.txt).
-This file indexes the five experiments in the repo.
+This file indexes the six experiments in the repo.
 
-## Experiment 5 — task-conditioned sentinel routing (latest)
+## Experiment 6 — sentinel-triggered re-grounding (latest)
+
+The faithful test of the original question: *when should you start a new
+Claude Code session?* Exp 5 showed compaction-style resets lose more than
+timing gains; exp 6 changes the reset operator to what a fresh Claude Code
+session actually does — **re-read true state from an external store** (a
+harness reducer plays the file system; store == generator truth proven on
+all 8,535 turns) — plus a verbatim-transcript **replay** bracket, on the same
+90-task pool with `A_no_reset` imported from runs5 for exactly-paired
+operator contrasts. Design: [`README_EXPERIMENT6.md`](README_EXPERIMENT6.md)
+· results: [`results6/SUMMARY.md`](results6/SUMMARY.md) ·
+[`results6/FINDINGS.md`](results6/FINDINGS.md). Headline: the regime
+**flips** — scheduled re-grounded restarts beat never restarting (+0.025,
+sig) at 43% fewer tokens, perfectly-timed single restarts add nothing
+(sig below the clock), and the transcript-replay bracket collapses (−0.124,
+sig) with the zero-carry sentinel significantly beating the clock there
+(+0.075) — yielding one law: **the lossier the restart, the more timing
+matters; the cheaper the restart, the more frequency wins.** Decision table
+in FINDINGS §6.
+
+## Experiment 5 — task-conditioned sentinel routing
 
 Experiments 1–4 deployed one blanket probe on every task. Experiment 5 routes
 instead: an LLM router classifies each task's dominant state demand (five-genre
@@ -151,23 +171,35 @@ python -m experiments5.run_all5          # all twelve arms
 python -m experiments5.metrics5
 python -m experiments5.prediction5       # same-trajectory precision/recall
 python -m experiments5.figures5
+
+# experiment 6 — deployment: re-grounding vs replay restarts
+python -m experiments6.store6            # offline: prove store == truth
+python -m experiments6.selftest6         # offline, mock LLM, all arms
+python -m experiments6.run_all6 --gate   # A (import), C_clock, F_oracle
+python -m experiments6.run_all6          # all eleven arms
+python -m experiments6.metrics6
+python -m experiments6.figures6
 ```
 
 Every runner is resumable and skips trajectories already on disk.
 
 ## What would move this forward
 
-1. **Better compaction, not better signals.** Experiment 5 put a free signal
-   at oracle-level timing and found the oracle itself no longer beats never
-   resetting — the loss is in the snapshot operator now. Hybrid snapshots
-   (schema + verbatim recent tail), external state checkpoints, and
-   selective compaction are the candidates.
-2. **A second model on experiments 2–5.** The single-model limitation is the
-   biggest hole, and exp 2 already showed the effect is model-dependent
-   (`gpt-4o-mini` arms are scaffolded everywhere, rolling-RPD-limited).
-3. **Experiment 5 at n ≈ 400.** The pooled Z_routed contrasts are +0.002 to
-   +0.021 with CIs of ±0.03; the per-domain anchors are significant but the
-   pooled ranking is not yet.
-4. **An unseen genre.** The router's taxonomy is open-ended, but every genre
-   tested so far had an exp-3-screened probe waiting. A spatial or
-   plan-tracking task family would test routing where no probe was tuned.
+1. **Agent-corrupted stores.** Exp 6's store derives entirely from user
+   instructions, so restarts always re-read *correct* state; a real repo also
+   contains the agent's mistaken edits. Letting the agent's own (possibly
+   wrong) writes land in the store — and measuring whether scheduled
+   re-grounding still wins — closes the last fidelity gap.
+2. **An oracle over schedules.** The single-reset oracle retired with exp 6
+   (repetition beats placement when restarts are cheap); the true ceiling is
+   the best reset *schedule* per task, searchable offline on recorded
+   trajectories.
+3. **A second model on experiments 2–6.** Still the biggest hole
+   (`gpt-4o-mini` arms scaffolded everywhere, rolling-RPD-limited).
+4. **Restart overhead priced in.** Exp 6's decision table hinges on fixed
+   restart cost (re-onboarding, cache loss, human time); adding an explicit
+   per-reset penalty sweep would locate the crossover where the zero-carry
+   sentinel overtakes the schedule.
+5. **An unseen genre.** Every domain tested had an exp-3-screened probe and
+   a hand-built monitor; a spatial or plan-tracking family would test the
+   taxonomy and the store abstraction where nothing was tuned.
