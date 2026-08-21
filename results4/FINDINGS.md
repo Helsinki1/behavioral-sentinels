@@ -95,7 +95,7 @@ is cheap, but landing on the right turn is not.
   could interact: carrying a probe might change *where* the failure lands, or
   a well-timed reset might partly refund the probe's cost.
 
-  Experiment 7 completes the 2×2 to settle it — `P_carry_noreset` (carry, no
+  Experiment 10 completes the 2×2 to settle it — `P_carry_noreset` (carry, no
   reset) and `P_carry_oracle` (carry, oracle-timed reset) alongside the
   existing `A_no_reset` and `F_oracle`. `D − C` gives the timing value *while
   carrying the probe*, and `D − A` answers directly whether a perfect carried

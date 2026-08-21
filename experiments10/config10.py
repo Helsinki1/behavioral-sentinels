@@ -1,8 +1,8 @@
-"""Experiment 7 configuration."""
+"""Experiment 10 configuration."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-RESULTS_DIR = ROOT / "results7"
+RESULTS_DIR = ROOT / "results10"
 RUNS_DIR = ROOT / "runs7"
 
 # Study A: the two operator regimes already measured, and the policies in each.

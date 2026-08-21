@@ -3,9 +3,50 @@
 Early-warning signals for hallucination onset in long-horizon LLM agents.
 
 The research design, taxonomy and motivation live in [`README.txt`](README.txt).
-This file indexes the six experiments in the repo.
+This file indexes the ten experiments in the repo, newest first.
 
-## Experiment 9 — sharded GSM8K x four models (latest)
+**A note on numbering and layout.** Experiments are numbered in the order they
+were *run*. Experiment 10 reuses the experiment-4 harness (it needs that
+regime — see its section), so its arms live in `experiments4/config4.py` and
+its trajectories in `runs4/`, while its analysis, results and write-up live in
+`experiments10/` and `results10/`. Everywhere else the mapping is the obvious
+one: experiment *n* → `experimentsN/`, `resultsN/`, `README_EXPERIMENTN.md`.
+
+## Experiment 10 — the carried-sentinel 2×2, and the break-even surface (latest)
+
+Two studies that price observation rather than ranking triggers.
+[`README_EXPERIMENT10.md`](README_EXPERIMENT10.md) · [`FINDINGS`](results10/FINDINGS.md)
+
+**Study B0 — does a perfect carried sentinel pay?** Exps 3–4 estimated this by
+*subtracting* the carrying cost from the timing prize, which assumes the two
+effects are additive. They are not. Completing the 2×2 (n=100 coding tasks,
+exp-4 compaction regime — the operator under which a timing prize exists):
+
+|  | no useful reset | oracle-timed reset |
+|---|---|---|
+| **no sentinel** | A = 0.849 | B = **0.908** |
+| **carries probe** | C = 0.823 | D = 0.851 |
+
+The timing prize is real (`B − A` = **+0.059**, sig), but granting a carried
+sentinel *perfect* timing leaves it **exactly break-even**: `D − A` = **+0.002,
+CI [−0.037, +0.040]**. The additive model predicted 0.883 against an observed
+0.851 — an error of −0.032, stable across n. Timing is worth +0.059 without a
+probe but only +0.027 while carrying one, so **a probe degrades the value of
+good timing itself** rather than levying a fixed toll. This is a precise
+*null*, not a negative: break-even, not harmful. Scope: one probe, one model,
+one task family — and exp 9 shows the observer effect's *sign* is
+regime-dependent, so this is a statement about this regime, not a constant.
+
+**Study A — the break-even surface.** Scoring every exp-5/6 policy under
+`U = accuracy − R·restarts − T·prompt_ktokens` and taking the upper envelope
+turns "sentinel vs clock" into a decision boundary: under a lossless operator
+the clock wins only while restarts are nearly free (R < 0.003), the zero-carry
+sentinel owns the large middle region, and never-reset takes over once restarts
+are expensive; under a lossy operator never-reset dominates almost everywhere.
+Descriptive decision analysis over existing runs, not a causal claim.
+[`STUDY_A.md`](results10/STUDY_A.md)
+
+## Experiment 9 — sharded GSM8K x four models
 
 Exp 8's active-vs-passive design re-run on a **respected external
 benchmark** — the `math` split of *LLMs Get Lost in Multi-Turn Conversation*
@@ -51,40 +92,6 @@ removes the contamination but its recall is too low to pay for its 9.3K
 fork tokens; and exp 6's law extends to observation itself — **when
 restarts are cheap and loss-free, the best observer is a clock.** Decision
 table in FINDINGS §5.
-
-## Experiment 7 — the carried-sentinel 2×2, and the break-even surface
-
-Two studies that price observation rather than ranking triggers.
-[`PLAN_EXPERIMENT7.md`](PLAN_EXPERIMENT7.md) · [`FINDINGS`](results7/FINDINGS.md)
-
-**Study B0 — does a perfect carried sentinel pay?** Exps 3–4 estimated this by
-*subtracting* the carrying cost from the timing prize, which assumes the two
-effects are additive. They are not. Completing the 2×2 (n=100 coding tasks,
-exp-4 compaction regime — the operator under which a timing prize exists):
-
-|  | no useful reset | oracle-timed reset |
-|---|---|---|
-| **no sentinel** | A = 0.849 | B = **0.908** |
-| **carries probe** | C = 0.823 | D = 0.851 |
-
-The timing prize is real (`B − A` = **+0.059**, sig), but granting a carried
-sentinel *perfect* timing leaves it **exactly break-even**: `D − A` = **+0.002,
-CI [−0.037, +0.040]**. The additive model predicted 0.883 against an observed
-0.851 — an error of −0.032, stable across n. Timing is worth +0.059 without a
-probe but only +0.027 while carrying one, so **a probe degrades the value of
-good timing itself** rather than levying a fixed toll. This is a precise
-*null*, not a negative: break-even, not harmful. Scope: one probe, one model,
-one task family — and exp 9 shows the observer effect's *sign* is
-regime-dependent, so this is a statement about this regime, not a constant.
-
-**Study A — the break-even surface.** Scoring every exp-5/6 policy under
-`U = accuracy − R·restarts − T·prompt_ktokens` and taking the upper envelope
-turns "sentinel vs clock" into a decision boundary: under a lossless operator
-the clock wins only while restarts are nearly free (R < 0.003), the zero-carry
-sentinel owns the large middle region, and never-reset takes over once restarts
-are expensive; under a lossy operator never-reset dominates almost everywhere.
-Descriptive decision analysis over existing runs, not a causal claim.
-[`STUDY_A.md`](results7/STUDY_A.md)
 
 ## Experiment 6 — sentinel-triggered re-grounding
 
@@ -260,6 +267,13 @@ python -m experiments6.run_all6 --gate   # A (import), C_clock, F_oracle
 python -m experiments6.run_all6          # all eleven arms
 python -m experiments6.metrics6
 python -m experiments6.figures6
+
+# experiment 10 — is a carried sentinel worth it? (2x2) + break-even surface
+python -m experiments4.run_all4 --limit 100 \
+       --arms A_no_reset,P_carry_noreset,F_oracle,P_carry_oracle
+python -m experiments10.factorial10    # the 2x2 with paired bootstrap CIs
+python -m experiments10.breakeven10    # decision map (re-analysis, no API calls)
+python -m experiments10.figures10
 ```
 
 Every runner is resumable and skips trajectories already on disk.

@@ -1,4 +1,4 @@
-"""Experiment 7, Study A — the sentinel break-even surface.
+"""Experiment 10, Study A — the sentinel break-even surface.
 
 Six experiments produced a horse race: which trigger gets the highest accuracy.
 That framing hides the actual deployment question, because it prices a reset at
@@ -24,7 +24,7 @@ This study needs no new API calls -- it re-reads experiments 5 and 6.
 """
 import json
 
-from .config7 import (COST_PER_RESET_GRID, COST_PER_KTOK_GRID, REGIMES,
+from .config10 import (COST_PER_RESET_GRID, COST_PER_KTOK_GRID, REGIMES,
                       RESULTS_DIR)
 
 
@@ -92,7 +92,7 @@ def compute():
 
 def report():
     out = compute()
-    L = ["# Experiment 7, Study A — the sentinel break-even surface", "",
+    L = ["# Experiment 10, Study A — the sentinel break-even surface", "",
          "Re-analysis of experiments 5 and 6; no new API calls. Each policy is scored by",
          "", "    U = accuracy - R x resets_per_task - T x prompt_ktokens_per_task", "",
          "with R the cost of one restart and T the cost of 1k prompt tokens, both in",

@@ -1,4 +1,4 @@
-"""Experiment 7, Study B0 — the carrying-cost x timing 2x2.
+"""Experiment 10, Study B0 — the carrying-cost x timing 2x2.
 
 Experiment 4 estimated "even a perfect carried probe barely pays" by
 subtracting the measured carrying cost from the measured timing prize. That
@@ -21,7 +21,7 @@ import statistics
 from experiments4.config4 import FACTORIAL, RESULTS_DIR as R4
 from experiments4.metrics4 import boot_ci
 from experiments4.run_all4 import load_arm
-from .config7 import RESULTS_DIR
+from .config10 import RESULTS_DIR
 
 
 def compute(model="gpt-oss-20b", n=40):
@@ -62,7 +62,7 @@ def compute(model="gpt-oss-20b", n=40):
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     (RESULTS_DIR / "factorial.json").write_text(json.dumps(out, indent=2))
 
-    L = ["# Experiment 7, Study B0 — does a perfect carried sentinel pay?", "",
+    L = ["# Experiment 10, Study B0 — does a perfect carried sentinel pay?", "",
          f"Model {model}, {len(common)} coding tasks paired across all four cells,",
          "experiment-4 regime (self-summary compaction — the operator under which a",
          "timing prize exists at all). Primary outcome: share of turns with zero errors.",

@@ -1,4 +1,9 @@
-# Experiment 7 — When is a sentinel worth its cost?
+# Experiment 10 — When is a sentinel worth its cost?
+
+*(Numbered 10 because it ran after experiment 9. Study B0 reuses the
+experiment-4 harness and regime, so its arms live in `experiments4/config4.py`
+and its trajectories in `runs4/`; analysis and results are here and in
+`results10/`.)*
 
 ## The question, and why the previous six experiments couldn't answer it
 
@@ -25,8 +30,8 @@ U = accuracy − R · restarts_per_task − T · prompt_ktokens_per_task
 `R` = cost of one restart, `T` = cost of 1k prompt tokens, both in
 accuracy-equivalent units (`R = 0.01` ⇒ one restart costs one accuracy point).
 Each policy is then a plane over the (R, T) cost plane and the winner is the
-upper envelope. Results: [`results7/STUDY_A.md`](results7/STUDY_A.md),
-map in `results7/figures/fig1_decision_map.png`.
+upper envelope. Results: [`results10/STUDY_A.md`](results10/STUDY_A.md),
+map in `results10/figures/fig1_decision_map.png`.
 
 **Findings (re-analysis of exps 5–6, 90 tasks):**
 

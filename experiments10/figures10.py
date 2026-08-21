@@ -1,4 +1,4 @@
-"""Experiment 7 figures — the decision map.
+"""Experiment 10 figures — the decision map.
 
 Given YOUR cost of a restart and YOUR cost of a token, which reset policy
 should you run? The map is the upper envelope of the policy planes.
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
 from experiments.figures import BASELINE, INK, INK2, MUTED, SURFACE, style, title
-from .config7 import REGIMES, RESULTS_DIR
+from .config10 import REGIMES, RESULTS_DIR
 
 FIG = RESULTS_DIR / "figures"
 PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300"]

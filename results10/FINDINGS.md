@@ -1,4 +1,4 @@
-# Experiment 7 — Findings
+# Experiment 10 — Findings
 
 ## Study B0 — the observer cost consumes the entire timing prize
 

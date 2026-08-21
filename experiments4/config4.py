@@ -64,7 +64,7 @@ ARMS = {
     "D_sentinel":      {"policy": "sentinel",  "carries_sentinel": True},
     "B_random":        {"policy": "random",    "carries_sentinel": False},
     "F_oracle":        {"policy": "oracle",    "carries_sentinel": False},
-    # --- the 2x2 interaction cells (experiment 7, Study B0) ---------------
+    # --- the 2x2 interaction cells (experiment 10, Study B0) ---------------
     # Exp 4 estimated "even a perfect carried probe barely pays" by SUBTRACTING
     # the carrying cost from the timing prize. That assumes the two effects are
     # additive, which was never tested. These two arms complete the factorial:
