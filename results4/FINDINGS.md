@@ -86,12 +86,25 @@ is cheap, but landing on the right turn is not.
   intervention budget. The task is now to close the gap between the sentinel
   (F1 ≈ 0.42 as a predictor) and the oracle, not to test more probes for
   prediction skill.
-- **The probe must get cheaper, not smarter.** Two-thirds of the loss is
-  carrying cost. A probe that is heavier but more accurate will likely lose
-  more, which is consistent with experiment 3 (heavier ensembles, larger
-  observer effect). The search should be for the *lightest* probe with any
-  signal, or for a signal that requires no probe at all — e.g. reading the
-  agent's own output for self-inconsistency, which costs nothing to carry.
+- **The probe may need to get cheaper rather than smarter — but this is not
+  yet established.** Two-thirds of the loss is carrying cost, and a heavier
+  probe plausibly loses more (consistent with experiment 3's ensembles). The
+  tempting next step is to subtract: prize +0.059 minus carrying cost −0.043
+  leaves ≈ +0.016, "so even a perfect carried probe barely pays". **That
+  subtraction assumes additivity and is not measured here.** The two effects
+  could interact: carrying a probe might change *where* the failure lands, or
+  a well-timed reset might partly refund the probe's cost.
+
+  Experiment 7 completes the 2×2 to settle it — `P_carry_noreset` (carry, no
+  reset) and `P_carry_oracle` (carry, oracle-timed reset) alongside the
+  existing `A_no_reset` and `F_oracle`. `D − C` gives the timing value *while
+  carrying the probe*, and `D − A` answers directly whether a perfect carried
+  sentinel can pay for itself. Until then the additive estimate should be read
+  as a hypothesis.
+
+  The zero-carry direction — a monitor read off output the agent already
+  produces — is motivated regardless, since it has no carrying cost to trade
+  against at all.
 
 ## Limitations
 
