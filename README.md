@@ -5,7 +5,27 @@ Early-warning signals for hallucination onset in long-horizon LLM agents.
 The research design, taxonomy and motivation live in [`README.txt`](README.txt).
 This file indexes the six experiments in the repo.
 
-## Experiment 8 — active vs passive observation (latest)
+## Experiment 9 — sharded GSM8K x four models (latest)
+
+Exp 8's active-vs-passive design re-run on a **respected external
+benchmark** — the `math` split of *LLMs Get Lost in Multi-Turn Conversation*
+(arXiv:2505.06120), 3 sharded GSM8K problems concatenated per session — and
+**four models** (`gpt-oss-120b`, `deepseek-v4-flash`, `qwen3p7-plus`,
+`gpt-4o-mini`) through one harness, with fully decidable per-turn
+hallucinations (premature ANSWER / missing WAIT / wrong final ANSWER vs the
+GSM8K key). Design: [`README_EXPERIMENT9.md`](README_EXPERIMENT9.md) ·
+results: [`results9/SUMMARY.md`](results9/SUMMARY.md) ·
+[`results9/PREDICTION.md`](results9/PREDICTION.md) ·
+[`results9/FINDINGS.md`](results9/FINDINGS.md). Headline: **the observer
+effect changes sign with the model** — carrying the probe costs −0.036 (exp
+8, oss-20b) and −0.016 (qwen3.7) but *pays* **+0.021** on gpt-oss-120b
+(sig), where the matched chore acts as an attention-refresh *treatment* and
+the active arm is the best arm outright (0.977); only one of four models
+shows a true lost-in-conversation regime under verbatim shards; the
+frozen-state quiz's precise-but-blind profile replicates across benchmark
+and models (a replicated negative result).
+
+## Experiment 8 — active vs passive observation
 
 The project's reframe: not "which sentinel is best" but **how should you
 observe a long-horizon agent at all**, with the taxonomy split on whether the
