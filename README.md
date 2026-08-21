@@ -5,7 +5,34 @@ Early-warning signals for hallucination onset in long-horizon LLM agents.
 The research design, taxonomy and motivation live in [`README.txt`](README.txt).
 This file indexes the six experiments in the repo.
 
-## Experiment 6 — sentinel-triggered re-grounding (latest)
+## Experiment 8 — active vs passive observation (latest)
+
+The project's reframe: not "which sentinel is best" but **how should you
+observe a long-horizon agent at all**, with the taxonomy split on whether the
+observation *writes into the agent's trajectory* — **active** (exp 1–5's
+carried probes), **passive-behavioural** (new: a frozen-state quiz asked on a
+forked, discarded copy of the conversation — zero contamination, fork tokens
+only), and **passive-observational** (exp 5's zero-carry trace monitors, the
+LLM judge). Same 90-task pool, reset operator fixed to exp 6's R1 reground;
+only three arms are new (`QUIZ`, `ACT_probe`, `ACT_carry_clock`) plus an
+offline **shadow pass** that asks the quiz retrospectively on `runs5`
+prefixes, so quiz precision/recall is scored on the same full-horizon
+trajectories as every passive baseline. Design:
+[`README_EXPERIMENT8.md`](README_EXPERIMENT8.md) · results:
+[`results8/SUMMARY.md`](results8/SUMMARY.md) ·
+[`results8/PREDICTION.md`](results8/PREDICTION.md) ·
+[`results8/FINDINGS.md`](results8/FINDINGS.md). Headline: the category
+ordering is **monotone on both axes** (trace monitor > quiz > carried probe
+in signal precision 0.78/0.60/≤0.10 *and* deployed accuracy
+0.841/0.813/0.792 — no Intervention-Paradox inversion); the observer effect
+is priced at **−0.036 accuracy (sig, all domains)** at a matched reset
+schedule, replicating exp 4's −0.043 under a different operator; the quiz
+removes the contamination but its recall is too low to pay for its 9.3K
+fork tokens; and exp 6's law extends to observation itself — **when
+restarts are cheap and loss-free, the best observer is a clock.** Decision
+table in FINDINGS §5.
+
+## Experiment 6 — sentinel-triggered re-grounding
 
 The faithful test of the original question: *when should you start a new
 Claude Code session?* Exp 5 showed compaction-style resets lose more than
