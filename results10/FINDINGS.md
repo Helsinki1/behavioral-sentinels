@@ -1,5 +1,13 @@
 # Experiment 10 — Findings
 
+> **Update (Study B1): the Study B0 headline below is operator-specific.** The
+> sub-additive penalty it reports is caused by compaction, and vanishes under
+> deterministic re-grounding (interaction −0.032 → +0.001). Under re-grounding
+> the same carried probe with the same oracle timing yields **+0.039,
+> significant** — a carried sentinel *does* pay when recovery is lossless. See
+> [`STUDY_B1.md`](STUDY_B1.md). Read Study B0 as "carried probes cannot pay
+> **when recovery is lossy self-summarisation**", not as a general claim.
+
 ## Study B0 — the observer cost consumes the entire timing prize
 
 **Headline: granting a carried sentinel *perfect* knowledge of when to

@@ -37,6 +37,26 @@ good timing itself** rather than levying a fixed toll. This is a precise
 one task family — and exp 9 shows the observer effect's *sign* is
 regime-dependent, so this is a statement about this regime, not a constant.
 
+**Study B1 — the penalty is compaction-specific (mechanism confirmed).** B0
+attributed the sub-additivity to the agent's self-summary having to reproduce
+the probe's ledger, and predicted it would vanish under deterministic
+re-grounding. It does. Re-running only cells B and D (A and C never reset, so
+they are operator-independent and shared):
+
+| contrast | compaction | re-grounding |
+|---|---|---|
+| timing value, no probe | +0.059 ✱ | +0.063 ✱ |
+| timing value **while carrying** | +0.028 | **+0.065** ✱ |
+| **interaction** | **−0.032** | **+0.001** |
+| **does a perfect carried sentinel pay?** | +0.002 | **+0.039** ✱ |
+
+Under re-grounding the probe stops corroding the repair operation entirely —
+timing is worth the same with or without it — and the carried sentinel becomes
+significantly profitable. **Carried probes are not fundamentally unable to pay;
+they are unable to pay when recovery is lossy self-summarisation.** The
+carrying cost itself (−0.026) was never the problem — the interaction was.
+[`STUDY_B1.md`](results10/STUDY_B1.md)
+
 **Study A — the break-even surface.** Scoring every exp-5/6 policy under
 `U = accuracy − R·restarts − T·prompt_ktokens` and taking the upper envelope
 turns "sentinel vs clock" into a decision boundary: under a lossless operator

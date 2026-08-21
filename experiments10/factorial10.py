@@ -81,9 +81,66 @@ def compute(model="gpt-oss-20b", n=40):
           f"- observed D: **{cells['D']:.4f}**",
           f"- error: **{out['additivity_error']:+.4f}**", ""]
     (RESULTS_DIR / "STUDY_B0.md").write_text("\n".join(L) + "\n", encoding="utf-8")
-    print("\n".join(L))
+    print("\n".join(L).encode("ascii","replace").decode("ascii"))
     return out
 
 
 if __name__ == "__main__":
     compute()
+
+
+# ---------------------------------------------------------------- Study B1
+def compare_operators(model="gpt-oss-20b", n=100):
+    """Study B1 — is the carried-probe penalty caused by COMPACTION specifically?
+
+    Study B0 attributed the sub-additive penalty to the agent's self-summary
+    having to reproduce the probe's ledger as well as the task state. If that
+    is right, the penalty must shrink toward zero under deterministic
+    re-grounding, where the harness supplies both and the agent summarises
+    nothing. Cells A and C never reset, so they are operator-independent and
+    are shared between the two 2x2s -- only B and D are re-run.
+    """
+    import statistics
+    from experiments4.config4 import FACTORIAL, FACTORIAL_REGROUND
+    from experiments4.metrics4 import boot_ci
+    from experiments4.run_all4 import load_arm
+
+    ids = list(range(n))
+    out = {}
+    for label, fac in [("compaction", FACTORIAL), ("reground", FACTORIAL_REGROUND)]:
+        arms = {k: load_arm(model, v, ids) for k, v in fac.items()}
+        common = sorted(set.intersection(*[set(v) for v in arms.values()]))
+        acc = {k: {t: arms[k][t]["accuracy"] for t in common} for k in arms}
+        cells = {k: round(statistics.mean(acc[k].values()), 4) for k in arms}
+        inter = [(acc["D"][t] - acc["C"][t]) - (acc["B"][t] - acc["A"][t]) for t in common]
+        dmb = [acc["D"][t] - acc["B"][t] for t in common]
+        ilo, ihi = boot_ci(inter)
+        dlo, dhi = boot_ci(dmb)
+        out[label] = {
+            "n": len(common), "cells": cells,
+            "interaction": {"mean": round(statistics.mean(inter), 4),
+                            "ci95": [round(ilo, 4), round(ihi, 4)],
+                            "significant": bool(ilo > 0 or ihi < 0)},
+            "D_minus_B": {"mean": round(statistics.mean(dmb), 4),
+                          "ci95": [round(dlo, 4), round(dhi, 4)],
+                          "significant": bool(dlo > 0 or dhi < 0)},
+        }
+    (RESULTS_DIR / "operator_comparison.json").write_text(json.dumps(out, indent=2))
+
+    L = ["# Experiment 10, Study B1 — is the carried-probe penalty compaction-specific?", "",
+         "Study B0 attributed the sub-additive penalty to the agent's self-summary having",
+         "to reproduce the probe's ledger. Prediction: it shrinks toward zero under",
+         "deterministic re-grounding, where the harness supplies state and ledger and the",
+         "agent summarises nothing. Cells A and C never reset, so they are",
+         "operator-independent and shared; only B and D were re-run.", "",
+         "| operator | A | B | C | D | interaction (D−C)−(B−A) | D − B |", "|---|---|---|---|---|---|---|"]
+    for k, v in out.items():
+        c, i, d = v["cells"], v["interaction"], v["D_minus_B"]
+        L.append(f"| {k} | {c['A']:.3f} | {c['B']:.3f} | {c['C']:.3f} | {c['D']:.3f} | "
+                 f"{i['mean']:+.4f} [{i['ci95'][0]:+.3f}, {i['ci95'][1]:+.3f}]"
+                 f"{' **sig**' if i['significant'] else ''} | "
+                 f"{d['mean']:+.4f} [{d['ci95'][0]:+.3f}, {d['ci95'][1]:+.3f}]"
+                 f"{' **sig**' if d['significant'] else ''} |")
+    (RESULTS_DIR / "STUDY_B1.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    print("\n".join(L).encode("ascii","replace").decode("ascii"))
+    return out

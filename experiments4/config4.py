@@ -78,7 +78,22 @@ ARMS = {
     #   D - A = can a perfect carried sentinel pay for itself at all?
     "P_carry_noreset": {"policy": "none",      "carries_sentinel": True},
     "P_carry_oracle":  {"policy": "oracle",    "carries_sentinel": True},
+    # --- the same 2x2 under DETERMINISTIC RE-GROUNDING (experiment 10, Study B1)
+    # Cells A and C never reset, so they are operator-independent and are reused
+    # verbatim. Only the two oracle-timed cells need re-running.
+    #   mechanism under test: the compaction penalty was attributed to the
+    #   agent's self-summary having to reproduce the probe's ledger. Re-grounding
+    #   supplies both state and ledger deterministically, so if that attribution
+    #   is right the penalty must shrink toward zero here.
+    "B_reground":      {"policy": "oracle", "carries_sentinel": False,
+                        "operator": "reground"},
+    "D_reground":      {"policy": "oracle", "carries_sentinel": True,
+                        "operator": "reground"},
 }
+
+# same 2x2, re-grounding operator (A and C reused: they never reset)
+FACTORIAL_REGROUND = {"A": "A_no_reset", "B": "B_reground",
+                      "C": "P_carry_noreset", "D": "D_reground"}
 
 # the 2x2 factorial, in (row, col) order
 FACTORIAL = {"A": "A_no_reset", "B": "F_oracle",
