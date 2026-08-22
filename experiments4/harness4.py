@@ -87,6 +87,54 @@ def extract_module(text):
     return out
 
 
+def true_module_at(task, turn_index):
+    """Replay the user's own instructions to get the TRUE module state entering
+    turn `turn_index` (0-based). Verified against the generator's truth fields
+    on all 2,060 turns of the pool. This is the external store a re-grounding
+    reset reads from -- the analogue of a fresh session re-reading the repo."""
+    fns = {k: list(v) for k, v in task["initial_module"].items()}
+    deleted = set()
+    for t in task["turns"][:turn_index]:
+        for op in t["ops"]:
+            o = op["op"]
+            if o == "add_fn":
+                fns[op["fn"]] = list(op["params"])
+            elif o == "add_param":
+                fns[op["fn"]].append(op["param"])
+            elif o == "remove_param":
+                fns[op["fn"]].remove(op["param"])
+            elif o == "rename_param":
+                fns[op["fn"]][fns[op["fn"]].index(op["old"])] = op["new"]
+            elif o == "rename_fn":
+                fns[op["new"]] = fns.pop(op["old"])
+                deleted.discard(op["new"])
+            elif o == "delete_fn":
+                del fns[op["fn"]]
+                deleted.add(op["fn"])
+    return fns, sorted(deleted)
+
+
+def reground(task, next_turn, carries_sentinel):
+    """Deterministic re-grounding: rebuild the session from the external store.
+    No LLM call, and -- the point of the experiment -- the agent never has to
+    reproduce its own state OR the probe's ledger, because the harness supplies
+    both. If the compaction penalty is caused by the agent's summary having to
+    carry the probe's bookkeeping, it must vanish here."""
+    module, deleted = true_module_at(task, next_turn - 1)
+    rules = "Every turn I will give you" + BRIEFING.split("Every turn I will give you", 1)[1]
+    if carries_sentinel:
+        rules += "\n\n" + CANARY_INSTRUCTIONS[SENTINEL]
+        rules += "\n" + _ledger_seed(task["turns"][next_turn - 2])
+    body = render_module(module)
+    if deleted:
+        body += "\n\n# functions deleted earlier in this session: " + ", ".join(deleted)
+    return [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": RESUME.format(module=body, rules=rules)},
+        {"role": "assistant", "content": "Understood. Ready to continue."},
+    ]
+
+
 async def compact(cfg, messages, task, next_turn, carries_sentinel):
     """Run the compaction operator. Returns (new_messages, dump_text, usage)."""
     ask = messages + [{"role": "user", "content": DUMP_REQUEST}]
@@ -133,14 +181,17 @@ async def run_arm(cfg, task, arm_name, arm, decide_reset):
                      "turns_since_reset": turns_since_reset,
                      "n_resets": len(resets), "first_hallu": first_hallu}
             if decide_reset(state):
-                new_msgs, dump, usage = await compact(
-                    cfg, messages, task, t, arm["carries_sentinel"])
-                prompt_tok += usage["prompt_tokens"] or 0
-                completion_tok += usage["completion_tokens"] or 0
+                if arm.get("operator", "compaction") == "reground":
+                    new_msgs = reground(task, t, arm["carries_sentinel"])
+                else:
+                    new_msgs, dump, usage = await compact(
+                        cfg, messages, task, t, arm["carries_sentinel"])
+                    prompt_tok += usage["prompt_tokens"] or 0
+                    completion_tok += usage["completion_tokens"] or 0
                 if new_msgs is not None:
                     messages = new_msgs
                     turns_since_reset = 0
-                    resets.append({"turn": t, "module": extract_module(dump)})
+                    resets.append({"turn": t, "resume": new_msgs[1]["content"]})
 
         user_msg = (first if i == 0 else
                     build_turn_body(task, turn,
@@ -170,6 +221,7 @@ async def run_arm(cfg, task, arm_name, arm, decide_reset):
     clean = sum(1 for r in records if not r["hallucination"])
     return {
         "task_id": task["task_id"], "arm": arm_name, "horizon": task["horizon"],
+        "operator": arm.get("operator", "compaction"),
         "difficulty": task["difficulty"], "turns_run": len(records),
         "accuracy": clean / len(records),
         "clean_turns": clean,

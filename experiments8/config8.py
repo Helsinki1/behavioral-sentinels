@@ -64,7 +64,17 @@ ARMS = {
                         "category": "active"},
     "ACT_carry_clock": {"policy": "scheduled", "probe": "labeled",
                         "category": "active"},
+    # experiment 11: the MISMATCHED counterpart of ACT_carry_clock. Identical
+    # policy, operator and schedule; the only difference is that the carried
+    # probe is the one intended for the OTHER domain. See README_EXPERIMENT11.md
+    # (pre-registered).
+    "MM_carry_clock":  {"policy": "scheduled", "probe": "mismatched",
+                        "category": "active"},
 }
+
+# experiment 11: deliberate probe/domain mismatch, the complement of exp 5's
+# INTENDED_GENRE mapping across the two domains that pass the degradation screen
+MISMATCHED_PROBE = {"coding": "lag_span", "babi": "staircase"}
 
 # arms read verbatim from runs6 (and runs5 for A_no_reset), never re-run
 REUSED_ARMS = {

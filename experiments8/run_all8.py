@@ -40,8 +40,12 @@ def load_arm(model, domain, arm, task_ids):
 
 
 def condition_for(arm_name, domain):
-    if ARMS[arm_name]["probe"] == "labeled":
+    probe = ARMS[arm_name]["probe"]
+    if probe == "labeled":
         return GENRE_TO_PROBE[INTENDED_GENRE[domain]]
+    if probe == "mismatched":                      # experiment 11
+        from .config8 import MISMATCHED_PROBE
+        return MISMATCHED_PROBE[domain]
     return "baseline"
 
 
