@@ -3,6 +3,19 @@
 Four models × seven arms × 34 sharded-GSM8K sessions (lost_in_conversation
 `math`, 3 problems/session, R1 reground). Tables:
 [`SUMMARY.md`](SUMMARY.md) · [`PREDICTION.md`](PREDICTION.md).
+Figures (`python -m experiments9.figures9` → [`figures/`](figures/)):
+
+| fig | file | what it shows |
+|---|---|---|
+| 1 | `fig1_observer_effect.png` | observer effect (carry-clock − clock) with 95% CI per model, incl. exp 8's 20b — §1 |
+| 2 | `fig2_degradation_regime.png` | no-reset accuracy and the clock/oracle lift per model — §2 |
+| 3 | `fig3_accuracy_by_arm.png` | accuracy of all 7 arms, one panel per model |
+| 4 | `fig4_success_by_arm.png` | success@0.9 of all 7 arms, one panel per model |
+| 5 | `fig5_contrasts_forest.png` | forest plot of all 13 paired contrasts per model |
+| 6 | `fig6_signal_precision_recall.png` | precision vs recall of each signal (clean reads) — §3, §4 |
+| 7 | `fig7_resets_by_arm.png` | resets per session per arm |
+| 8 | `fig8_tokens_by_arm.png` | agent + quiz-fork tokens per arm |
+| 9 | `fig9_decision_plane.png` | accuracy vs total spend, Pareto front per model — §5 |
 
 ## 1. The headline: active observation is not uniformly costly — its sign is a property of the model × task regime
 
