@@ -1,3 +1,26 @@
+# Paper Contents
+
+Title: Active and passive observation methods for reasoning and action agent traces
+
+Abstract: Using active (carry) versus passive (zero-carry) observation methods to analyze their reliability in signaling performance degradation, as well as applying them to agent systems to trigger state regrounding/resets
+
+Outline:
+
+{Potentially touch upon the rumor/theory/urban-legend that you can use "canaries" to signal when to start a new claude code session?}
+
+Across GSM8K on Qwen-27b, GPT-OSS, Deepseek-Flash, and GPT-4-mini, we show that active observation methods introduce an "observer effect" that leads to worse performance on agent tasks due to the additional tasks/reasoning the agent must handle (invasive monitoring) ----- compare with baseline/traditional methods: no monitoring / clock / token limit in context window ------ this is purely just for measuring the precision/recall of these signals at detecting performance degradation within N turns of them firing, this experiment will not have these signals trigger any resets/regrounding ------ we'll show that active method signals are less useful (worse precision/recall) AND cause performance degradation, the reason behind this is because they fire too frequently and too sparsely? ----------- the showcase of our set of active observation methods should span (1) "say my name" (2) "increment this number" (3) a chore that requires recomputation/reasoning for unique answer ------------ we will speak about (a) better performance as chore complexity increases (b) worse "observer effect" as complexity increases (c) reiterate that it's not as good as baseline/trivial methods -------------------------- also cover how ground truth was labeled
+
+Meanwhile, side by side, we show the results of the same experiments but using passive observation methods. We will show our (a) disposable quizzes (b) llm-judge (c) ANOTHER METHOD NEEDED HERE ----------- we'll show that passive observation methods have higher recall/precision than baseline methods, but increase token costs
+
+Next, we move onto deploying these signals (baseline/active/passive) into an agent system to trigger resets (compaction of agent state) and regroundings (clearing agent state and seeding summary into system prompt for agent to recollect context) and GIVING THE AGENT AN LLM-GENERATED BREAKDOWN ON GOOD/BAD DECISIONS SO FAR + THINGS TO CAREFUL ON (NEW, NEEDS TO BE DONE) ------------ we show one large bar chart with 3 clusters of bars: one cluster with all the mini-bars of each baseline method, one cluster with all the active-method variants, and one cluster with all the passive-method variants -- we display overall performance on GSM8K using that bar graph --------------- then, we break down further analysis on the niche/specific situations in which each (baseline/active/passive) observation methods perform better (i.e. with lossy compaction methods like clearing the entire state, or under more consistent compaction methods, or no compaction at all form of help-triggering to reorganize agent state like the breakdown) -------- these will serve as our final comments that we will speak about in our conclusion
+
+
+Appendix: Foundational Papers to Cite?
+   - 
+
+
+---
+
 # Behavioral Sentinels
 
 Early-warning signals for hallucination onset in long-horizon LLM agents.
