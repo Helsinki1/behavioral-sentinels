@@ -1,0 +1,32 @@
+{
+  "build_sha256": "500989bc96cacdaf8e383a9f1d141b6cbdf4522ab25b2d0aca38b73f204d7bf9",
+  "call": {
+    "call_key": "intent_extraction:002:extraction-conversational:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are given a goal and conditions from a math word problem. Transform them into a conversational multi-turn format where conditions are revealed progressively.\n\nOutput JSON format:\n{\n  \"initial_query\": \"short conversational version of the goal (what to find)\",\n  \"hints\": [\n    {\"hint\": \"condition 1 as a complete sentence\"},\n    {\"hint\": \"condition 2 as a complete sentence\"},\n    ...\n  ]\n}\n\nRules:\n1. The initial_query should be based on the goal - state WHAT to find\n   - Keep it short and conversational\n   - It must make sense on its own (a user's first message in a chat)\n2. Each hint corresponds to a condition, rephrased as a complete sentence\n   - Start with a capital letter\n   - End with a period (.) or question mark (?)\n   - Be grammatically correct when read alone — each hint must be self-contained\n   - Do NOT use back-references like \"the rest\", \"those eggs\", \"the remaining\" without context\n3. Don't use math symbols or calculations in hints\n4. Keep the SAME order as the input conditions (do NOT reorder)\n5. Together, initial_query + all hints should contain ALL information from the original problem\n6. Preserve ALL numerical values exactly — do not round, approximate, or omit any number\n\nExample:\n\nQ: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\n\nGoal: How many trees did the grove workers plant today?\n\nConditions:\n[\n  {\"argument\": \"There are 15 trees in the grove.\"},\n  {\"argument\": \"Grove workers will plant trees in the grove today.\"},\n  {\"argument\": \"After they are done, there will be 21 trees.\"}\n]\n\nOutput:\n{\n  \"initial_query\": \"How many trees did the grove workers plant today?\",\n  \"hints\": [\n    {\"hint\": \"There are 15 trees in the grove.\"},\n    {\"hint\": \"Grove workers will plant trees in the grove today.\"},\n    {\"hint\": \"After they are done, there will be 21 trees.\"}\n  ]\n}\n\nNow transform:\n\nQuestion: You can buy a movie super ticket for $20 that includes rights to watch any movie and you get one popcorn with a soda for only $1 extra. Or you can buy a movie ticket for $12 and buy one popcorn and a soda at regular price. What's the regular price of popcorn if the soda costs $3 and you didn't buy the super ticket and ended up saving $2?\n\nGoal: What is the regular price of one popcorn?\n\nConditions: [{\"argument\": \"A movie super ticket costs $20 and includes the right to watch any movie.\"}, {\"argument\": \"With the movie super ticket, one popcorn and one soda cost $1 extra.\"}, {\"argument\": \"A regular movie ticket costs $12.\"}, {\"argument\": \"A soda costs $3 at the regular price.\"}, {\"argument\": \"The moviegoer did not buy the super ticket and saved $2.\"}]",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/intent_extraction/dataset_impl/gsm8k/prompts/conversational.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "1121e4933efe5de7d4300d7fc3db625909eeccb02ff4a7c4e752a3ba5c06ee31"
+      }
+    ],
+    "prompt_sha256": "9f88ed1a8fa294d0bb36efcba285e880160c50323261b3f042b24a5e03cc69b9",
+    "role": "generator",
+    "temperature": 0.7
+  },
+  "model": "gpt-5.6-luna",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 450,
+  "stage": "intent_extraction",
+  "task_id": "extracted-gsm8k-test-450",
+  "upstream_max_output_tokens": 8192
+}

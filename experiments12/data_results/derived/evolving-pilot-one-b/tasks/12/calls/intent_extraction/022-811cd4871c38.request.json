@@ -1,0 +1,30 @@
+{
+  "build_sha256": "190cb1a981c7cd10222768f36e05035d298399d2d76b5f59eb60e0e65cd4d6cc",
+  "call": {
+    "call_key": "intent_extraction:022:llm-judge:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are an expert at comparing math word problems for information equivalence.\n\nYour task: Determine if a RECONSTRUCTED problem contains ALL the information from the ORIGINAL problem needed to arrive at the SAME answer.\n\nIMPORTANT: You are NOT solving the problem. You are comparing whether two problem statements contain equivalent information.\n\n=== WHAT TO CHECK ===\n\n1. **Numerical Values**: All numbers and quantities must be preserved exactly.\n   - Original: \"15 trees\" → Reconstructed must have \"15 trees\" (not \"some trees\")\n   - Original: \"$2 each\" → Reconstructed must have \"$2 each\"\n\n2. **Relationships**: How quantities relate must be preserved.\n   - Original: \"3 times as many\" → Reconstructed must preserve this multiplier\n   - Original: \"half of\" → Reconstructed must preserve this fraction\n\n3. **Actions/Operations**: What happens in the problem must be preserved.\n   - Original: \"eats 3 eggs\" → Reconstructed must have this consumption\n   - Original: \"sells the rest\" → Reconstructed must indicate selling remaining items\n\n4. **Question/Goal**: What is being asked must be the same.\n   - Original: \"How much money?\" → Reconstructed must ask about money\n   - Original: \"How many apples?\" → Reconstructed must ask about count of apples\n\n=== EXAMPLE ===\n\nORIGINAL:\n\"Janet's ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?\"\n\nRECONSTRUCTED:\n\"How much money does Janet make daily at the farmers' market? Janet's ducks lay 16 eggs per day. She eats three eggs for breakfast every morning. She bakes muffins with four eggs every day. She sells the remaining eggs for $2 per egg.\"\n\nOUTPUT:\n{\n  \"equivalent\": true,\n  \"reasoning\": \"All numerical values (16 eggs, 3 for breakfast, 4 for muffins, $2 per egg) are preserved. The question asks about daily earnings at the farmers' market. All actions (laying, eating, baking, selling) are preserved.\",\n  \"missing_info\": []\n}\n\n=== COUNTER-EXAMPLE (NOT EQUIVALENT) ===\n\nORIGINAL:\n\"Janet's ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?\"\n\nRECONSTRUCTED:\n\"How much money does Janet make? Janet has ducks that lay eggs. She uses some for breakfast and baking. She sells eggs for $2 each.\"\n\nOUTPUT:\n{\n  \"equivalent\": false,\n  \"reasoning\": \"Critical numerical values are missing: '16 eggs per day', '3 for breakfast', '4 for muffins'. Without these specific numbers, the problem cannot be solved to get the same answer.\",\n  \"missing_info\": [\"16 eggs per day\", \"3 eggs for breakfast\", \"4 eggs for muffins\"]\n}\n\n=== NOW EVALUATE ===\n\nORIGINAL PROBLEM:\nCarlos is planting a lemon tree. The tree will cost $90 to plant. Each year it will grow 7 lemons, which he can sell for $1.5 each. It costs $3 a year to water and feed the tree. How many years will it take before he starts earning money on the lemon tree?\n\nRECONSTRUCTED PROBLEM (from conditions):\nHow many years will it take before Carlos starts earning money from the lemon tree? Planting the lemon tree costs Carlos $90. The lemon tree will grow 7 lemons each year, and Carlos can sell each lemon for $1.50. Watering and feeding the lemon tree costs $3 per year.\n\nOutput a JSON object:\n{\n  \"equivalent\": true/false,\n  \"reasoning\": \"Your detailed explanation\",\n  \"missing_info\": [\"list of missing or altered information\"] or []\n}\n\nRules:\n- If ANY numerical value is missing or changed → NOT equivalent\n- If ANY relationship (times, half, etc.) is missing → NOT equivalent\n- If the question being asked is different → NOT equivalent\n- Order of information does NOT matter, only completeness\n",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/intent_extraction/dataset_impl/gsm8k/prompts/llm_judge.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "57e60527244e0b1a470d536938e3190c86ed917fad74728761f1c887e2dc81e0"
+      }
+    ],
+    "prompt_sha256": "d1cd6cd23bbfc1d5d0ba856ce21561cab827abd53b0f4624ddf20465f90210b3",
+    "role": "judge",
+    "temperature": 0.7
+  },
+  "model": "gpt-5.6-sol-judge",
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 12,
+  "stage": "intent_extraction",
+  "task_id": "extracted-gsm8k-test-12"
+}

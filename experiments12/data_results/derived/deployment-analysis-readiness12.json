@@ -1,0 +1,306 @@
+{
+  "artifact_type": "experiment12_deployment_analysis_readiness",
+  "claim_map": [
+    {
+      "built_in_figure": "online adaptive-figures/deployment-evolving_intent_gsm8k-gpt-5.6-luna.svg",
+      "claim_or_figure": "Overall deployed task success by observation method and class",
+      "online_fields": [
+        "metric_summaries[metric=success].{observation_class,method,operator,n_tasks,mean,ci_low,ci_high}",
+        "rows[].{unit_id,method,operator,success}"
+      ],
+      "post_run_gap": "Built-in online plot has four classes (baseline, active, passive-behavioral, passive-observational), while README asks for three; merge the two passive classes only in a clearly labeled paper plot.",
+      "primary_source": "online",
+      "readiness": "direct_once_runs_complete",
+      "yoked_fields": [
+        "metric_summaries[metric=success].{observation_class,method,operator,n_tasks,mean,ci_low,ci_high}",
+        "method_effects[metric=success].{reference_method,comparison_method,operator,effect,ci_low,ci_high}"
+      ]
+    },
+    {
+      "built_in_figure": "none for effects; use exact rows/effect arrays",
+      "claim_or_figure": "Which method helps under none, lossy compaction, public-state regrounding, or GOOD/BAD/WATCH feedback",
+      "online_fields": [
+        "metric_summaries[metric=success] keyed by method/operator",
+        "operator_effects[metric=success].{method,operator,control_mean,operator_mean,effect,ci_low,ci_high}",
+        "rows[].{unit_id,method,operator,success} for paired custom interactions"
+      ],
+      "post_run_gap": "Neither analyzer emits method-by-operator difference-in-differences. Compute task-paired interactions from rows before claiming one method is specifically better in one regime.",
+      "primary_source": "online",
+      "readiness": "fields_available_but_provider_free_interaction_plot_needed",
+      "yoked_fields": [
+        "operator_effects[metric=success].{method,operator,effect,ci_low,ci_high}",
+        "method_effects[metric=success].{reference_method,comparison_method,operator,effect,ci_low,ci_high}"
+      ]
+    },
+    {
+      "built_in_figure": "included as operator bars in the online success figure",
+      "claim_or_figure": "GOOD/BAD/WATCH feedback can improve deployed performance",
+      "online_fields": [
+        "metric_summaries[metric=success,operator=good_bad_watch_feedback]",
+        "operator_effects[metric=success,operator=good_bad_watch_feedback]",
+        "rows[operator=good_bad_watch_feedback].{selected_actions,success,total_tokens,actual_cost_usd}"
+      ],
+      "post_run_gap": "The implemented feedback is deterministic, current-prefix, exact-quote-only GOOD/BAD/WATCH\u2014not an LLM-generated breakdown. Narrow the exposition or run a new operator; there is no yoked sensitivity for feedback.",
+      "primary_source": "online_secondary",
+      "readiness": "direct_online_only_once_complete",
+      "yoked_fields": []
+    },
+    {
+      "built_in_figure": "two-pass emits total_tokens, latency_ms, and actual_cost_usd figures; online emits success only",
+      "claim_or_figure": "Token, latency, and dollar cost of deployed observation",
+      "online_fields": [
+        "metric_summaries[metric in task_tokens,observer_tokens,total_tokens,latency_ms,actual_cost_usd]",
+        "rows[].{task_tokens,observer_tokens,total_tokens,latency_ms,actual_cost_usd}"
+      ],
+      "post_run_gap": "Two-pass resources exclude frozen pass-one passive-observer cost, so use online rows for end-to-end cost; label yoked resource plots as pass-two-only sensitivity.",
+      "primary_source": "online",
+      "readiness": "data_direct_but_online_cost_plot_needed",
+      "yoked_fields": [
+        "metric_summaries[metric in total_tokens,latency_ms,actual_cost_usd]",
+        "operator_effects and method_effects for the same metrics"
+      ]
+    },
+    {
+      "built_in_figure": "two-pass action_rate figure; no online action-rate figure",
+      "claim_or_figure": "Natural firing/action frequency and its relationship to success",
+      "online_fields": [
+        "metric_summaries[metric in threshold_firings,selected_actions]",
+        "rows[].{observations,threshold_firings,selected_actions,applied_interventions,success}"
+      ],
+      "post_run_gap": "Calibration used fixed-count ranking, but online execution uses score >= scalar cutoff. Existing diagnostic shows deployed scalar-implied rates from 17.5% to 100%, so never describe deployment as a uniform 20% firing policy.",
+      "primary_source": "online",
+      "readiness": "direct_but_must_be_reported_with_success",
+      "yoked_fields": [
+        "metric_summaries[metric in action_rate,acted_on_task,scheduled_actions,applied_interventions]"
+      ]
+    },
+    {
+      "built_in_figure": "two-pass success figure; cross-model causal figure comes from confirmatory observer-effect artifacts, not deployment",
+      "claim_or_figure": "Carrying an active recomputation probe degrades task performance",
+      "online_fields": [
+        "metric_summaries[metric=success] for active_recompute versus zero-carry methods (ecological, natural-policy comparison)"
+      ],
+      "post_run_gap": "Deployment is one model and one benchmark. Cross-model observer-effect language must come from the completed confirmatory runs, not these deployment analyses.",
+      "primary_source": "confirmatory_observer_effect_plus_yoked_sensitivity",
+      "readiness": "luna_deployment_sensitivity_once_complete",
+      "yoked_fields": [
+        "method_effects[metric=success, reference/comparison includes active_recompute] under the same task and checkpoint-1 schedule"
+      ]
+    },
+    {
+      "built_in_figure": "confirmatory results/signal-figures/*.svg",
+      "claim_or_figure": "Signal precision, recall, AUPRC, and early-warning lead time",
+      "online_fields": [],
+      "post_run_gap": "Do not infer signal accuracy from deployment success. Use score-confirmatory.json metrics[].{precision,recall,auprc,firing_rate,lead_time} and disclose the scalar/rank diagnostic separately.",
+      "primary_source": "confirmatory_signal_scoring_not_deployment",
+      "readiness": "already_available_upstream",
+      "yoked_fields": []
+    },
+    {
+      "built_in_figure": null,
+      "claim_or_figure": "Complexity ladder across say-name, increment, and recomputation active chores",
+      "online_fields": [],
+      "post_run_gap": "Both deployment analyses contain only active_recompute. Retaining a complexity-ladder claim requires new provider runs or clearly labeled legacy evidence.",
+      "primary_source": "unsupported_by_pending_deployments",
+      "readiness": "not_supported",
+      "yoked_fields": []
+    },
+    {
+      "built_in_figure": null,
+      "claim_or_figure": "Deployment generalizes across reasoning and action traces, models, and benchmarks",
+      "online_fields": [],
+      "post_run_gap": "Both deployments are Luna on Evolving-Intent GSM8K only. BFCL supplies completed action-trace detection/observer-effect evidence, but no deployment evidence.",
+      "primary_source": "unsupported_by_pending_deployments",
+      "readiness": "not_supported",
+      "yoked_fields": []
+    },
+    {
+      "built_in_figure": null,
+      "claim_or_figure": "Ground-truth outcome provenance",
+      "online_fields": [
+        "rows[].success; validated by exact adaptive replay and job/evaluation binding"
+      ],
+      "post_run_gap": "Explain benchmark-specific final-answer ground truth separately from the earlier event labels used for signal precision/recall.",
+      "primary_source": "both",
+      "readiness": "direct_once_runs_complete",
+      "yoked_fields": [
+        "rows[].{success,outcome_source}",
+        "validation.{canonical_regraded_cells,cached_official_cells,primary_ready}"
+      ]
+    }
+  ],
+  "code_tree_sha256": "851d54e58d109321ba16e246cc5b3abb9a3601cb5c20a666bbda039dcddf085e",
+  "commands": {
+    "online_extract": [
+      "python3 -m experiments12.adaptive_analysis12 extract",
+      "--run-id e12-deploy-online-evolving-luna-40-v1",
+      "--manifest-sha256 7294e3edcd3468aeb8881182f77a3f22c9d9de41dff1dba8f183e9fe1753c9a7",
+      "--output experiments12/artifacts/e12-deploy-online-evolving-luna-40-v1/results/adaptive-analysis.json",
+      "--figures experiments12/artifacts/e12-deploy-online-evolving-luna-40-v1/results/adaptive-figures",
+      "--artifacts experiments12/artifacts",
+      "--bootstrap-iterations 2000",
+      "--bootstrap-seed 12012"
+    ],
+    "yoked_extract": [
+      "python3 -m experiments12.two_pass_analysis12 extract",
+      "--run-id e12-deploy-twopass-yoked-evolving-luna-40-v1",
+      "--manifest-sha256 8cd3194cb460aa5e77a8d9b7b7aeee01f6c81df7d655f22f7a03a529f4062250",
+      "--output experiments12/artifacts/e12-deploy-twopass-yoked-evolving-luna-40-v1/results/two-pass-analysis.json",
+      "--tables experiments12/artifacts/e12-deploy-twopass-yoked-evolving-luna-40-v1/results/two-pass-tables",
+      "--figures experiments12/artifacts/e12-deploy-twopass-yoked-evolving-luna-40-v1/results/two-pass-figures",
+      "--artifacts experiments12/artifacts",
+      "--bootstrap-iterations 2000",
+      "--bootstrap-seed 12012"
+    ],
+    "yoked_validate": [
+      "python3 -m experiments12.two_pass_analysis12 validate",
+      "--run-id e12-deploy-twopass-yoked-evolving-luna-40-v1",
+      "--manifest-sha256 8cd3194cb460aa5e77a8d9b7b7aeee01f6c81df7d655f22f7a03a529f4062250",
+      "--output experiments12/artifacts/e12-deploy-twopass-yoked-evolving-luna-40-v1/results/validation-two-pass.json",
+      "--artifacts experiments12/artifacts"
+    ]
+  },
+  "post_run_actions": [
+    {
+      "action": "Run both exact validation/extraction commands only after exact cell coverage reaches 1120/1120 and 480/480.",
+      "kind": "provider_free",
+      "priority": "P0"
+    },
+    {
+      "action": "Describe online thresholds as scalar-cutoff policies with observed action rates, not fixed 20% rank policies; pair every success plot with firing/action incidence.",
+      "kind": "exposition",
+      "priority": "P0"
+    },
+    {
+      "action": "Rename GOOD/BAD/WATCH as deterministic quote-only feedback unless a genuinely LLM-generated feedback operator is rerun.",
+      "kind": "exposition",
+      "priority": "P0"
+    },
+    {
+      "action": "Replace the README's stale Qwen-27B/GPT-4-mini model list with the actual frozen confirmatory models; deployments themselves are Luna-only.",
+      "kind": "exposition",
+      "priority": "P0"
+    },
+    {
+      "action": "Add task-paired method contrasts and method-by-operator interactions from rows; create success-effect, action-rate, and online resource figures.",
+      "kind": "provider_free",
+      "priority": "P1"
+    },
+    {
+      "action": "Create the requested three-cluster paper plot by merging passive subclasses visually while retaining method labels and the four-class machine-readable source.",
+      "kind": "provider_free",
+      "priority": "P1"
+    },
+    {
+      "action": "Present yoked results as a checkpoint-1, one-action sensitivity isolating carry/operator effects; it does not test comparative trigger timing or natural firing quality.",
+      "kind": "exposition",
+      "priority": "P1"
+    },
+    {
+      "action": "Call the yoked run a sensitivity analysis on the same 40 source tasks\u2014not an independent replication\u2014and fill the README's third passive method slot with trace_rules.",
+      "kind": "exposition",
+      "priority": "P1"
+    },
+    {
+      "action": "Run missing active-complexity variants, multi-model/multi-benchmark deployments, expanded yoked methods/feedback, or LLM-generated feedback only if those broader claims remain central.",
+      "kind": "new_provider_runs_only_if_claim_retained",
+      "priority": "P2"
+    }
+  ],
+  "provider_calls_made": 0,
+  "reviewed_sources": {
+    "adaptive_analysis": {
+      "path": "experiments12/adaptive_analysis12.py",
+      "sha256": "0e9c00a99d21a23dee444229742c5296c6046baef14ce8f2a0def5fbd6b2953c"
+    },
+    "paper_contents": {
+      "file_sha256": "20c7bf7de438778298f8b044f55a71246a7be0cadf30068406d831e6e95b3c43",
+      "path": "README.md#paper-contents",
+      "section_sha256": "5a97924f09d96b62423644c80389df7528fcf060423d140c344c9d2adb9d29db"
+    },
+    "two_pass_analysis": {
+      "path": "experiments12/two_pass_analysis12.py",
+      "sha256": "7387d1e7a086175554a6d1146263c6ab752b5dd8b9ec14b92f9f93e3e4077f17"
+    }
+  },
+  "runs": {
+    "online": {
+      "analysis_can_run_now": false,
+      "analysis_output_exists": false,
+      "declared_n_cells": 1120,
+      "exact_cell_coverage_complete": false,
+      "expected_cells": 1120,
+      "manifest_sha256": "7294e3edcd3468aeb8881182f77a3f22c9d9de41dff1dba8f183e9fe1753c9a7",
+      "methods": [
+        "active_recompute",
+        "frozen_probe:recompute",
+        "frozen_quiz",
+        "trace_judge",
+        "trace_rules",
+        "turn_clock",
+        "context_use"
+      ],
+      "mode": "online_adaptive",
+      "models": [
+        "gpt-5.6-luna"
+      ],
+      "n_tasks": 40,
+      "operators": [
+        "none",
+        "lossy_compaction",
+        "public_state_reground",
+        "good_bad_watch_feedback"
+      ],
+      "pair_manifest_sha256": "16ebad63b1119ed79887e3d62f2ea1b8a7df69021a8254b27923b54314af70c6",
+      "progress": {
+        "event_logs": 556,
+        "jobs": 548,
+        "outputs": 547
+      },
+      "run_id": "e12-deploy-online-evolving-luna-40-v1"
+    },
+    "yoked": {
+      "analysis_can_run_now": false,
+      "analysis_output_exists": false,
+      "declared_n_cells": 480,
+      "exact_cell_coverage_complete": false,
+      "expected_cells": 480,
+      "manifest_sha256": "8cd3194cb460aa5e77a8d9b7b7aeee01f6c81df7d655f22f7a03a529f4062250",
+      "methods": [
+        "active_recompute",
+        "frozen_probe:recompute",
+        "turn_clock",
+        "context_use"
+      ],
+      "mode": "two_pass_frozen",
+      "models": [
+        "gpt-5.6-luna"
+      ],
+      "n_tasks": 40,
+      "operators": [
+        "none",
+        "lossy_compaction",
+        "public_state_reground"
+      ],
+      "pair_manifest_sha256": "e45838cb64c522100fb2f0c3f212a00736ab5e1dfb9c501d22f8710c4b6a006e",
+      "progress": {
+        "event_logs": 296,
+        "jobs": 288,
+        "outputs": 288
+      },
+      "run_id": "e12-deploy-twopass-yoked-evolving-luna-40-v1"
+    }
+  },
+  "schema_version": 1,
+  "snapshot_utc": "2026-08-26T17:58:39Z",
+  "yoked_schedule_summary": {
+    "groups": 160,
+    "groups_with_one_action": 160,
+    "trigger_methods": [
+      "active_recompute"
+    ],
+    "unique_action_checkpoints": [
+      1
+    ]
+  }
+}

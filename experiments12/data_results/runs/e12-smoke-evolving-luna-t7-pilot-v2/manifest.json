@@ -1,0 +1,168 @@
+{
+  "arms": [
+    "clean",
+    "active_name_copy",
+    "active_name_recall",
+    "active_counter",
+    "active_recompute"
+  ],
+  "benchmark_receipts": [
+    {
+      "license_id": "MIT",
+      "name": "task_manifest",
+      "path": "experiments12/generated/evolving-smoke-three-composed-a/tasks-t7.jsonl",
+      "permission_receipt_sha256": null,
+      "sha256": "d13e96860a8c0fab4f6f8faa73b2a9ef2befb56e680699a0bdab99a37b1282a2",
+      "upstream_commit": null
+    },
+    {
+      "license_id": "MIT",
+      "name": "evolving_rendered_dataset",
+      "path": "experiments12/generated/evolving-smoke-three-composed-a/evolving_intent_gsm8k_frozen.json",
+      "permission_receipt_sha256": null,
+      "sha256": "1cf3b0b726b380dea23e361f12502f3a4ddb4dcc721b861935b936a69ee79fd8",
+      "upstream_commit": "993d6be9597ac03854b46362ccd647eb1bfd267a"
+    },
+    {
+      "license_id": "MIT",
+      "name": "evolving_build_receipt",
+      "path": "experiments12/generated/evolving-smoke-three-composed-a/build_receipt.json",
+      "permission_receipt_sha256": null,
+      "sha256": "e07c64ff2328ec655c0fedfba7498713c3c5486d89e6e8c5197275bf98df20d5",
+      "upstream_commit": "993d6be9597ac03854b46362ccd647eb1bfd267a"
+    },
+    {
+      "license_id": null,
+      "name": "source_allocation_registry",
+      "path": "experiments12/source_allocation12.json",
+      "permission_receipt_sha256": null,
+      "sha256": "6a686d1a7429ccd648b808f3b4d4554053f0485826c3fe35505f8243c5846bc9",
+      "upstream_commit": null
+    }
+  ],
+  "budget_usd": {
+    "hard": {
+      "fireworks": 30.0,
+      "openai": 500.0
+    },
+    "operational": {
+      "fireworks": 24.0,
+      "openai": 400.0
+    }
+  },
+  "created_at": "2026-08-26T09:15:01Z",
+  "experiment": "12",
+  "extra_config": {
+    "n_cells": 15,
+    "n_tasks": 3,
+    "replicates": 1,
+    "source_allocation": {
+      "benchmark": "evolving_intent_gsm8k",
+      "realized_allocation_sha256": null,
+      "registry_sha256": "6a686d1a7429ccd648b808f3b4d4554053f0485826c3fe35505f8243c5846bc9",
+      "replacement_source_ids": [],
+      "source_ids": [
+        "12",
+        "36",
+        "40"
+      ],
+      "stage": "smoke",
+      "structural_rejection_source_ids": [],
+      "wave": "single_model"
+    }
+  },
+  "manifest_version": 2,
+  "model_catalog_sha256": "49b50398b32153b8cfcf6fc477fb03e4445f9c15565ff7fee61e03096802fa13",
+  "models": [
+    "gpt-5.6-luna"
+  ],
+  "operators": [
+    "none"
+  ],
+  "pair_manifest_sha256": "283be7997db3247735df7be2e2369b4c1e4ab29b8e5afaa83d72743777076e50",
+  "passive_monitor_spec": {
+    "sha256": "d181cd08d50d1bcd2e690fc216a22ede9b3120ebca4b4715311d2a839f52799f",
+    "spec": {
+      "baselines": {
+        "context_use": {
+          "formula": "input_tokens / context_window",
+          "version": 1
+        },
+        "turn_clock": {
+          "formula": "completed_turns / task_horizon",
+          "version": 1
+        }
+      },
+      "checkpoint": {
+        "actionable_offset_turns": 1,
+        "every": 1,
+        "schedule": "after_each_nonfinal_task_turn",
+        "source": "clean_trajectory.checkpoint_turns"
+      },
+      "determinism": {
+        "fork_is_discarded": true,
+        "inputs_use_only_completed_public_prefix": true,
+        "reasoning_effort_by_target": {
+          "deepseek-v4-flash-0731": "none",
+          "gpt-5.6-luna": "medium",
+          "gpt-5.6-terra": "medium",
+          "gpt-oss-120b": "low",
+          "qwen3p7-plus": "none"
+        },
+        "temperature": null
+      },
+      "frozen_probe": {
+        "max_output_tokens": 192,
+        "variants": [
+          "current_copy",
+          "recompute"
+        ],
+        "version": 1
+      },
+      "frozen_quiz": {
+        "fire_at_wrong": 1,
+        "generators": {
+          "bfcl_multi_turn": {
+            "name": "bfcl_public_tool_results",
+            "version": 1
+          },
+          "evolving_intent_gsm8k": {
+            "name": "evolving_public_turn_tokens",
+            "version": 1
+          }
+        },
+        "grader_version": 1,
+        "max_output_tokens": 320
+      },
+      "required_methods": [
+        "turn_clock",
+        "context_use",
+        "trace_rules",
+        "frozen_probe",
+        "frozen_quiz",
+        "trace_judge"
+      ],
+      "trace_judge": {
+        "enabled": true,
+        "max_output_tokens": 320,
+        "model": "gpt-5.6-sol-judge",
+        "reasoning_effort": "low",
+        "version": 1
+      },
+      "trace_rules": {
+        "fire_threshold": 0.65,
+        "version": 1
+      },
+      "version": 1
+    }
+  },
+  "randomization_seed": 120120,
+  "repository": {
+    "code_tree_sha256": "87e9e0b257eb7ad3fc531c0bd094f819626ce564283ebb367fdae0d3d521ef52",
+    "commit": "f76289d5a3d212641b16717606268c5f9a6cad48",
+    "tracked_dirty": false
+  },
+  "run_id": "e12-smoke-evolving-luna-t7-pilot-v2",
+  "secret_values_recorded": false,
+  "stage": "smoke"
+}

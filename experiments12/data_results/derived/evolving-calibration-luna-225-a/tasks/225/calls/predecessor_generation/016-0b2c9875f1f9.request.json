@@ -1,0 +1,32 @@
+{
+  "build_sha256": "a78b69e1365fa2a0862dd386d5ff04cbbcee0de13d77efccf68a6e73e1eca4d4",
+  "call": {
+    "call_key": "predecessor_generation:016:cross-turn-relevance-check:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are verifying that conditions from one turn in a multi-turn conversation do NOT leak critical identifying information into another turn.\n\n=== CONTEXT ===\n\nIn a multi-turn search conversation, the user changes their question between turns. Each turn has:\n- A GOAL (the user's question)\n- CONDITIONS (clues that help identify the answer)\n\nSome conditions are \"shared\" (from the original dataset — these are fine).\nSome conditions are \"new\" (generated specifically for that turn).\n\nThe turns are causally related (e.g., \"Find the director\" → \"Find the movie by that director\"), so the new conditions may be about related topics. That is expected and acceptable.\n\n=== YOUR TASK ===\n\nDetermine whether the NEW conditions from OTHER turns would **significantly help someone answer** the TARGET turn's question — meaning they would meaningfully narrow down or identify the specific answer.\n\nTARGET TURN:\n  Goal: \"How many days will Andrew travel to Rochester and return to New Jersey?\"\n  Conditions (this turn's own):\n  - [1] Andrew plans a road trip from New Jersey to Rochester.\n  - [2] Traveling by bus from New Jersey to Rochester takes 6 days.\n  - [3] Traveling by car from New Jersey to Rochester takes half as many days as traveling by bus.\n  - [4] Andrew plans to travel to Rochester by bus and return from Rochester by car.\n\nNEW CONDITIONS FROM OTHER TURNS:\n  - [Turn 1, ID 309] A bus ticket from New Jersey to Rochester costs 80 dollars.\n  - [Turn 1, ID 310] Andrew purchases a second bus ticket for his return trip to New Jersey.\n  - [Turn 2, ID 207] The one-way driving distance from New Jersey to Rochester is 350 miles.\n  - [Turn 2, ID 208] Andrew returns to New Jersey by the same route.\n  - [Turn 3, ID 105] A bus ticket from New Jersey to Rochester costs $85.\n  - [Turn 3, ID 106] Andrew purchases one bus ticket for the trip to Rochester.\n\n=== JUDGMENT CRITERIA ===\n\nMark a condition as PROBLEMATIC **only if** it meets ALL of these criteria:\n1. It provides a SPECIFIC, CONCRETE fact (not a generic/vague description)\n2. That fact would meaningfully narrow the search space for the TARGET answer\n3. Without this condition, the search space would be substantially larger\n\nMark a condition as FINE if ANY of these apply:\n- It describes a different entity or topic that doesn't help identify the target answer\n- It is generic/vague (e.g., \"well-known\", \"popular\", \"in the same field\")\n- It merely restates information already implied by the shared conditions\n- It describes background context without adding identifying specificity\n- It is about a DIFFERENT turn's puzzle entity, even if in a related domain\n\nIMPORTANT: Be LENIENT. Causal chains naturally share thematic overlap. Only flag conditions that provide a genuine shortcut to answering the target question — something that would make the puzzle significantly easier.\n\n=== OUTPUT FORMAT ===\n\nOutput valid JSON:\n{\n  \"judgments\": [\n    {\n      \"argument\": \"The condition text being judged\",\n      \"source_turn\": 1,\n      \"problematic\": true/false,\n      \"reason\": \"Brief explanation\"\n    }\n  ],\n  \"overall_pass\": true/false,\n  \"problematic_arguments\": [\"List of condition texts that are genuinely problematic, empty if none\"]\n}\n",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/cross_turn_relevance_check.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "1876b34e8969f096f7fbc1e0026cfa9c28615f90732a21904a9476479c5a805b"
+      }
+    ],
+    "prompt_sha256": "e48df3f2c2e98f46db8d62965c9b54780a6392e609d924833d201d3f36bbc3f5",
+    "role": "judge",
+    "temperature": 1.0
+  },
+  "model": "gpt-5.6-sol-judge",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 225,
+  "stage": "predecessor_generation",
+  "task_id": "extracted-gsm8k-test-225",
+  "upstream_max_output_tokens": 8192
+}

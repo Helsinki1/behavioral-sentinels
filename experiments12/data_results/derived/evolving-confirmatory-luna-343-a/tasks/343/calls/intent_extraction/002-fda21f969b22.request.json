@@ -1,0 +1,32 @@
+{
+  "build_sha256": "4a89ce61a89fdae00644e216f0774e46c96544d302f48a838ce66f6b28a01230",
+  "call": {
+    "call_key": "intent_extraction:002:extraction-conversational:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are given a goal and conditions from a math word problem. Transform them into a conversational multi-turn format where conditions are revealed progressively.\n\nOutput JSON format:\n{\n  \"initial_query\": \"short conversational version of the goal (what to find)\",\n  \"hints\": [\n    {\"hint\": \"condition 1 as a complete sentence\"},\n    {\"hint\": \"condition 2 as a complete sentence\"},\n    ...\n  ]\n}\n\nRules:\n1. The initial_query should be based on the goal - state WHAT to find\n   - Keep it short and conversational\n   - It must make sense on its own (a user's first message in a chat)\n2. Each hint corresponds to a condition, rephrased as a complete sentence\n   - Start with a capital letter\n   - End with a period (.) or question mark (?)\n   - Be grammatically correct when read alone — each hint must be self-contained\n   - Do NOT use back-references like \"the rest\", \"those eggs\", \"the remaining\" without context\n3. Don't use math symbols or calculations in hints\n4. Keep the SAME order as the input conditions (do NOT reorder)\n5. Together, initial_query + all hints should contain ALL information from the original problem\n6. Preserve ALL numerical values exactly — do not round, approximate, or omit any number\n\nExample:\n\nQ: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\n\nGoal: How many trees did the grove workers plant today?\n\nConditions:\n[\n  {\"argument\": \"There are 15 trees in the grove.\"},\n  {\"argument\": \"Grove workers will plant trees in the grove today.\"},\n  {\"argument\": \"After they are done, there will be 21 trees.\"}\n]\n\nOutput:\n{\n  \"initial_query\": \"How many trees did the grove workers plant today?\",\n  \"hints\": [\n    {\"hint\": \"There are 15 trees in the grove.\"},\n    {\"hint\": \"Grove workers will plant trees in the grove today.\"},\n    {\"hint\": \"After they are done, there will be 21 trees.\"}\n  ]\n}\n\nNow transform:\n\nQuestion: In his training as a professional athlete, Tyson runs 5000 meters every day. His coach, however, wants him to run 1/5 times more meters in a day. If he took the coach's advice and trained for a month, what is the total distance he covered in June?\n\nGoal: What total distance did Tyson cover in June while following his coach's training advice?\n\nConditions: [{\"argument\": \"Tyson runs 5000 meters every day as part of his training as a professional athlete.\"}, {\"argument\": \"Tyson's coach wants him to run 1/5 times more meters per day.\"}, {\"argument\": \"Tyson followed the coach's advice and trained for a month in June.\"}]",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/intent_extraction/dataset_impl/gsm8k/prompts/conversational.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "1121e4933efe5de7d4300d7fc3db625909eeccb02ff4a7c4e752a3ba5c06ee31"
+      }
+    ],
+    "prompt_sha256": "922bb65ee3003cd4bc3ddf5dbbc3a1ac8bd8bc458cf81d81dcae57ea404d2af0",
+    "role": "generator",
+    "temperature": 0.7
+  },
+  "model": "gpt-5.6-luna",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 343,
+  "stage": "intent_extraction",
+  "task_id": "extracted-gsm8k-test-343",
+  "upstream_max_output_tokens": 8192
+}

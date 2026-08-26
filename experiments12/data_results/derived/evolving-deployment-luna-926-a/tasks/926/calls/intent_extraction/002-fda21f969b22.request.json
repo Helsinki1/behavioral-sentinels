@@ -1,0 +1,32 @@
+{
+  "build_sha256": "76f1377455598c09fa9e4f1dee630083e9c27935d82ef4d6bfff5af67f567aa6",
+  "call": {
+    "call_key": "intent_extraction:002:extraction-conversational:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are given a goal and conditions from a math word problem. Transform them into a conversational multi-turn format where conditions are revealed progressively.\n\nOutput JSON format:\n{\n  \"initial_query\": \"short conversational version of the goal (what to find)\",\n  \"hints\": [\n    {\"hint\": \"condition 1 as a complete sentence\"},\n    {\"hint\": \"condition 2 as a complete sentence\"},\n    ...\n  ]\n}\n\nRules:\n1. The initial_query should be based on the goal - state WHAT to find\n   - Keep it short and conversational\n   - It must make sense on its own (a user's first message in a chat)\n2. Each hint corresponds to a condition, rephrased as a complete sentence\n   - Start with a capital letter\n   - End with a period (.) or question mark (?)\n   - Be grammatically correct when read alone — each hint must be self-contained\n   - Do NOT use back-references like \"the rest\", \"those eggs\", \"the remaining\" without context\n3. Don't use math symbols or calculations in hints\n4. Keep the SAME order as the input conditions (do NOT reorder)\n5. Together, initial_query + all hints should contain ALL information from the original problem\n6. Preserve ALL numerical values exactly — do not round, approximate, or omit any number\n\nExample:\n\nQ: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\n\nGoal: How many trees did the grove workers plant today?\n\nConditions:\n[\n  {\"argument\": \"There are 15 trees in the grove.\"},\n  {\"argument\": \"Grove workers will plant trees in the grove today.\"},\n  {\"argument\": \"After they are done, there will be 21 trees.\"}\n]\n\nOutput:\n{\n  \"initial_query\": \"How many trees did the grove workers plant today?\",\n  \"hints\": [\n    {\"hint\": \"There are 15 trees in the grove.\"},\n    {\"hint\": \"Grove workers will plant trees in the grove today.\"},\n    {\"hint\": \"After they are done, there will be 21 trees.\"}\n  ]\n}\n\nNow transform:\n\nQuestion: Colby loves going to the movies and every month his parents give him $150 to spend at the movies. Tickets for Fridays and Saturdays cost $10. Tickets for any other day cost $7. Popcorn costs $8 and boxes of candy cost $2. It is the last day of the month and it's a Friday. He wants to make sure he gets a popcorn and box of candy that night. How many movies can he see if he already saw 5 movies on a Friday or Saturday, 8 movies on other days, had 2 tubs of popcorn, and four boxes of candy that month?\n\nGoal: How many additional movies can Colby see on the last Friday of the month while staying within his monthly movie budget?\n\nConditions: [{\"argument\": \"Colby's parents give him $150 each month to spend at the movies.\"}, {\"argument\": \"Tickets for movies on Fridays and Saturdays cost $10, while tickets on all other days cost $7.\"}, {\"argument\": \"A tub of popcorn costs $8, and a box of candy costs $2.\"}, {\"argument\": \"Colby has already seen 5 movies on Fridays or Saturdays and 8 movies on other days during the month.\"}, {\"argument\": \"Colby has already had 2 tubs of popcorn and 4 boxes of candy during the month, and he wants one tub of popcorn and one box of candy on the last Friday.\"}]",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/intent_extraction/dataset_impl/gsm8k/prompts/conversational.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "1121e4933efe5de7d4300d7fc3db625909eeccb02ff4a7c4e752a3ba5c06ee31"
+      }
+    ],
+    "prompt_sha256": "b30e8cd6eaac1ce1de9f14e2120dc776d34ab917989eda16bcccec4134b4da73",
+    "role": "generator",
+    "temperature": 0.7
+  },
+  "model": "gpt-5.6-luna",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 926,
+  "stage": "intent_extraction",
+  "task_id": "extracted-gsm8k-test-926",
+  "upstream_max_output_tokens": 8192
+}

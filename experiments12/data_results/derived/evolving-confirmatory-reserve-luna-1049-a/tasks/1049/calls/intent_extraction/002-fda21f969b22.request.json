@@ -1,0 +1,32 @@
+{
+  "build_sha256": "48aaed68db4198f701d10f61d6c6f091aab309d8baaaec949e010c6a21923d31",
+  "call": {
+    "call_key": "intent_extraction:002:extraction-conversational:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are given a goal and conditions from a math word problem. Transform them into a conversational multi-turn format where conditions are revealed progressively.\n\nOutput JSON format:\n{\n  \"initial_query\": \"short conversational version of the goal (what to find)\",\n  \"hints\": [\n    {\"hint\": \"condition 1 as a complete sentence\"},\n    {\"hint\": \"condition 2 as a complete sentence\"},\n    ...\n  ]\n}\n\nRules:\n1. The initial_query should be based on the goal - state WHAT to find\n   - Keep it short and conversational\n   - It must make sense on its own (a user's first message in a chat)\n2. Each hint corresponds to a condition, rephrased as a complete sentence\n   - Start with a capital letter\n   - End with a period (.) or question mark (?)\n   - Be grammatically correct when read alone — each hint must be self-contained\n   - Do NOT use back-references like \"the rest\", \"those eggs\", \"the remaining\" without context\n3. Don't use math symbols or calculations in hints\n4. Keep the SAME order as the input conditions (do NOT reorder)\n5. Together, initial_query + all hints should contain ALL information from the original problem\n6. Preserve ALL numerical values exactly — do not round, approximate, or omit any number\n\nExample:\n\nQ: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\n\nGoal: How many trees did the grove workers plant today?\n\nConditions:\n[\n  {\"argument\": \"There are 15 trees in the grove.\"},\n  {\"argument\": \"Grove workers will plant trees in the grove today.\"},\n  {\"argument\": \"After they are done, there will be 21 trees.\"}\n]\n\nOutput:\n{\n  \"initial_query\": \"How many trees did the grove workers plant today?\",\n  \"hints\": [\n    {\"hint\": \"There are 15 trees in the grove.\"},\n    {\"hint\": \"Grove workers will plant trees in the grove today.\"},\n    {\"hint\": \"After they are done, there will be 21 trees.\"}\n  ]\n}\n\nNow transform:\n\nQuestion: There are 50 books in a small library. Half of them are written in English, and 10% in German. All others are written in Spanish. How many Spanish books are there?\n\nGoal: How many books in the small library are written in Spanish?\n\nConditions: [{\"argument\": \"There are 50 books in a small library.\"}, {\"argument\": \"Half of the books are written in English.\"}, {\"argument\": \"10% of the books are written in German.\"}, {\"argument\": \"All books not written in English or German are written in Spanish.\"}]",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/intent_extraction/dataset_impl/gsm8k/prompts/conversational.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "1121e4933efe5de7d4300d7fc3db625909eeccb02ff4a7c4e752a3ba5c06ee31"
+      }
+    ],
+    "prompt_sha256": "5a5442a9959d6a0541aa46d43806386399c3b15a96dd6ee822f237fe3e0b2f64",
+    "role": "generator",
+    "temperature": 0.7
+  },
+  "model": "gpt-5.6-luna",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 1049,
+  "stage": "intent_extraction",
+  "task_id": "extracted-gsm8k-test-1049",
+  "upstream_max_output_tokens": 8192
+}

@@ -1,0 +1,32 @@
+{
+  "build_sha256": "b615023f8526fcbc5a078e08015915200792a7250a532a92c1f7bcb9ae6e7e9b",
+  "call": {
+    "call_key": "predecessor_generation:013:cross-turn-relevance-check:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are verifying that conditions from one turn in a multi-turn conversation do NOT leak critical identifying information into another turn.\n\n=== CONTEXT ===\n\nIn a multi-turn search conversation, the user changes their question between turns. Each turn has:\n- A GOAL (the user's question)\n- CONDITIONS (clues that help identify the answer)\n\nSome conditions are \"shared\" (from the original dataset — these are fine).\nSome conditions are \"new\" (generated specifically for that turn).\n\nThe turns are causally related (e.g., \"Find the director\" → \"Find the movie by that director\"), so the new conditions may be about related topics. That is expected and acceptable.\n\n=== YOUR TASK ===\n\nDetermine whether the NEW conditions from OTHER turns would **significantly help someone answer** the TARGET turn's question — meaning they would meaningfully narrow down or identify the specific answer.\n\nTARGET TURN:\n  Goal: \"How many feet long is the couch?\"\n  Conditions (this turn's own):\n  - [1] The rug is 5 feet wider than the chair.\n  - [2] The couch is 2 feet longer than twice the width of the rug.\n  - [3] The chair is 3 feet wide.\n\nNEW CONDITIONS FROM OTHER TURNS:\n  - [Turn 1, ID 306] The rug is 8 feet long.\n  - [Turn 2, ID 205] The rug is 8 feet long.\n  - [Turn 3, ID 104] The chair is positioned beside the rug in the living room.\n\n=== JUDGMENT CRITERIA ===\n\nMark a condition as PROBLEMATIC **only if** it meets ALL of these criteria:\n1. It provides a SPECIFIC, CONCRETE fact (not a generic/vague description)\n2. That fact would meaningfully narrow the search space for the TARGET answer\n3. Without this condition, the search space would be substantially larger\n\nMark a condition as FINE if ANY of these apply:\n- It describes a different entity or topic that doesn't help identify the target answer\n- It is generic/vague (e.g., \"well-known\", \"popular\", \"in the same field\")\n- It merely restates information already implied by the shared conditions\n- It describes background context without adding identifying specificity\n- It is about a DIFFERENT turn's puzzle entity, even if in a related domain\n\nIMPORTANT: Be LENIENT. Causal chains naturally share thematic overlap. Only flag conditions that provide a genuine shortcut to answering the target question — something that would make the puzzle significantly easier.\n\n=== OUTPUT FORMAT ===\n\nOutput valid JSON:\n{\n  \"judgments\": [\n    {\n      \"argument\": \"The condition text being judged\",\n      \"source_turn\": 1,\n      \"problematic\": true/false,\n      \"reason\": \"Brief explanation\"\n    }\n  ],\n  \"overall_pass\": true/false,\n  \"problematic_arguments\": [\"List of condition texts that are genuinely problematic, empty if none\"]\n}\n",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/cross_turn_relevance_check.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "1876b34e8969f096f7fbc1e0026cfa9c28615f90732a21904a9476479c5a805b"
+      }
+    ],
+    "prompt_sha256": "92f70e600d2ebcde9c5f9da0e3ea833f8b2d7e2d1298de27071a9142a3c975fb",
+    "role": "judge",
+    "temperature": 1.0
+  },
+  "model": "gpt-5.6-sol-judge",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 503,
+  "stage": "predecessor_generation",
+  "task_id": "extracted-gsm8k-test-503",
+  "upstream_max_output_tokens": 8192
+}

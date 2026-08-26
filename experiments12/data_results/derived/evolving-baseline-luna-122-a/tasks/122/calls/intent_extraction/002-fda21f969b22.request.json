@@ -1,0 +1,32 @@
+{
+  "build_sha256": "e6b18b518b0f9cffe857d53eb2c98b2da3df62fde204e5a51c1e387ae058bafd",
+  "call": {
+    "call_key": "intent_extraction:002:extraction-conversational:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are given a goal and conditions from a math word problem. Transform them into a conversational multi-turn format where conditions are revealed progressively.\n\nOutput JSON format:\n{\n  \"initial_query\": \"short conversational version of the goal (what to find)\",\n  \"hints\": [\n    {\"hint\": \"condition 1 as a complete sentence\"},\n    {\"hint\": \"condition 2 as a complete sentence\"},\n    ...\n  ]\n}\n\nRules:\n1. The initial_query should be based on the goal - state WHAT to find\n   - Keep it short and conversational\n   - It must make sense on its own (a user's first message in a chat)\n2. Each hint corresponds to a condition, rephrased as a complete sentence\n   - Start with a capital letter\n   - End with a period (.) or question mark (?)\n   - Be grammatically correct when read alone — each hint must be self-contained\n   - Do NOT use back-references like \"the rest\", \"those eggs\", \"the remaining\" without context\n3. Don't use math symbols or calculations in hints\n4. Keep the SAME order as the input conditions (do NOT reorder)\n5. Together, initial_query + all hints should contain ALL information from the original problem\n6. Preserve ALL numerical values exactly — do not round, approximate, or omit any number\n\nExample:\n\nQ: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\n\nGoal: How many trees did the grove workers plant today?\n\nConditions:\n[\n  {\"argument\": \"There are 15 trees in the grove.\"},\n  {\"argument\": \"Grove workers will plant trees in the grove today.\"},\n  {\"argument\": \"After they are done, there will be 21 trees.\"}\n]\n\nOutput:\n{\n  \"initial_query\": \"How many trees did the grove workers plant today?\",\n  \"hints\": [\n    {\"hint\": \"There are 15 trees in the grove.\"},\n    {\"hint\": \"Grove workers will plant trees in the grove today.\"},\n    {\"hint\": \"After they are done, there will be 21 trees.\"}\n  ]\n}\n\nNow transform:\n\nQuestion: Sadie slept 8 hours on Monday. For the next two days, she slept 2 hours less, each, because she had to complete some assignments. If the rest of the week she slept 1 hour more than those two days, how many hours did she sleep in total throughout the week?\n\nGoal: How many hours did Sadie sleep in total throughout the week?\n\nConditions: [{\"argument\": \"Sadie slept 8 hours on Monday.\"}, {\"argument\": \"On Tuesday and Wednesday, Sadie slept 2 hours less each day than she slept on Monday because she had to complete assignments.\"}, {\"argument\": \"From Thursday through Sunday, Sadie slept 1 hour more each day than she slept on Tuesday and Wednesday.\"}]",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/intent_extraction/dataset_impl/gsm8k/prompts/conversational.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "1121e4933efe5de7d4300d7fc3db625909eeccb02ff4a7c4e752a3ba5c06ee31"
+      }
+    ],
+    "prompt_sha256": "8ee861100a1109bd7611c9296ab45c78cff8162bc5e98793850eacf4478b927d",
+    "role": "generator",
+    "temperature": 0.7
+  },
+  "model": "gpt-5.6-luna",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 122,
+  "stage": "intent_extraction",
+  "task_id": "extracted-gsm8k-test-122",
+  "upstream_max_output_tokens": 8192
+}

@@ -1,0 +1,32 @@
+{
+  "build_sha256": "e6b18b518b0f9cffe857d53eb2c98b2da3df62fde204e5a51c1e387ae058bafd",
+  "call": {
+    "call_key": "intent_extraction:003:extraction-verification:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are given a math word problem and its decomposed conditions (broken into pieces). Check if the goal + conditions together contain all the essential information from the original problem.\n\nOutput JSON format:\n{\n  \"coverage\": \"complete\" OR \"incomplete\",\n  \"missing_info\": \"description of missing information (only if incomplete)\"\n}\n\nRules:\n1. Check if ALL numbers, quantities, and relationships are preserved exactly\n2. Check if the question/goal is clear and self-contained\n3. Return \"complete\" if all essential info is present\n4. Return \"incomplete\" only if critical information is missing\n\n⚠️ IMPORTANT: Conditions can be paraphrased (expressed differently) as long as the MEANING is preserved.\n- ✅ OK: Original says \"16 eggs\", condition says \"sixteen eggs\" (same meaning)\n- ✅ OK: Original says \"twice as many\", condition says \"2 times as many\" (same meaning)\n- ✅ OK: Condition rephrases with more context for self-containment\n- ❌ NOT OK: Original says \"sells for $2 per egg\", condition is missing (meaning lost)\n- ❌ NOT OK: Original says \"16 eggs\", condition says \"15 eggs\" (value changed)\n\nExample 1 (Complete):\n\nProblem: Janet's ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?\n\nGoal: How much in dollars does Janet make every day at the farmers' market?\n\nConditions:\n[\n  {\"argument_id\": 1, \"argument\": \"Janet's ducks lay 16 eggs per day.\"},\n  {\"argument_id\": 2, \"argument\": \"Janet eats three eggs for breakfast every morning.\"},\n  {\"argument_id\": 3, \"argument\": \"Janet bakes muffins for her friends every day with four eggs.\"},\n  {\"argument_id\": 4, \"argument\": \"Janet sells the remaining duck eggs at the farmers' market daily for $2 per fresh duck egg.\"}\n]\n\nOutput:\n{\"coverage\": \"complete\"}\n\nExample 2 (Incomplete):\n\nProblem: Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15, and her grandparents twice as much as her parents. How much more money does Betty need?\n\nGoal: How much more money does Betty need to buy the wallet?\n\nConditions:\n[\n  {\"argument_id\": 1, \"argument\": \"Betty is saving money for a new wallet which costs $100.\"},\n  {\"argument_id\": 2, \"argument\": \"Betty currently has only half of the money she needs.\"}\n]\n\nOutput:\n{\"coverage\": \"incomplete\", \"missing_info\": \"Missing: parents give $15, grandparents give twice as much as parents ($30)\"}\n\nNow verify these conditions:\n\nProblem: Sadie slept 8 hours on Monday. For the next two days, she slept 2 hours less, each, because she had to complete some assignments. If the rest of the week she slept 1 hour more than those two days, how many hours did she sleep in total throughout the week?\n\nConditions: [{\"argument_id\": 0, \"argument\": \"How many hours did Sadie sleep in total throughout the week?\"}, {\"argument_id\": 1, \"argument\": \"Sadie slept 8 hours on Monday.\"}, {\"argument_id\": 2, \"argument\": \"On Tuesday and Wednesday, Sadie slept 2 hours less each day than she slept on Monday because she had to complete assignments.\"}, {\"argument_id\": 3, \"argument\": \"From Thursday through Sunday, Sadie slept 1 hour more each day than she slept on Tuesday and Wednesday.\"}]\n",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/intent_extraction/dataset_impl/gsm8k/prompts/verification.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "5ad97c8f17444b34bf7364ccc8c2df9b9109124d746bb9971aaabebfafa9cf97"
+      }
+    ],
+    "prompt_sha256": "a54e91bb4ccec77f532d38c04747cec76d1faae52b370e9e9e2502ed3b740e72",
+    "role": "judge",
+    "temperature": 0.7
+  },
+  "model": "gpt-5.6-sol-judge",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 122,
+  "stage": "intent_extraction",
+  "task_id": "extracted-gsm8k-test-122",
+  "upstream_max_output_tokens": 8192
+}

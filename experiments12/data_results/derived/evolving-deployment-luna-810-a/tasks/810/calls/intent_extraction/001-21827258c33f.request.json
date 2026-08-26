@@ -1,0 +1,32 @@
+{
+  "build_sha256": "6830696cd074e1460defc11e8462b1e78e3d9a00e3e7ba74b00c492f684ff56c",
+  "call": {
+    "call_key": "intent_extraction:001:extraction-decompose:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are given a grade-school math word problem. Decompose it into a GOAL and CONDITIONS.\n\nOutput a JSON object with this format:\n{\n  \"function\": \"The main question - what to find/calculate\",\n  \"arguments\": [\n    {\"argument\": \"first piece of given information\"},\n    {\"argument\": \"second piece of given information\"},\n    ...\n  ]\n}\n\nRules:\n1. GOAL: The main question - WHAT to find/calculate\n   - Should describe what the problem asks WITHOUT including the specific numbers/values\n   - e.g., \"How many trees did the grove workers plant today?\" (not \"How many trees from 15 to 21?\")\n   - The goal MUST be self-contained: do NOT use \"the described scenario\", \"the above situation\", or similar references to conditions\n   - Do NOT use pronouns (she, he, it, they) without a named subject in the goal itself\n   - Reason: the goal is presented FIRST in conversation, before any conditions are revealed, so it must make sense alone\n2. CONDITIONS: The given information needed to solve (1-5 items)\n   - Each condition is a factual statement extracted from the problem\n   - Conditions contain the numerical values and context\n3. Each condition should be a direct quote or close paraphrase from the question text\n4. Conditions should not overlap\n5. Do NOT add hints or solving strategies - only extract information from the problem\n6. Do NOT add INFERRED or DERIVED conditions — only extract facts explicitly stated in the problem\n   - WRONG: \"The net eggs after breakfast and baking is 9.\" (this is calculated, not stated)\n   - RIGHT: \"She eats three for breakfast every morning.\" (directly from the text)\n7. Do NOT create META-CONDITIONS that describe the problem itself rather than providing information\n   - WRONG: \"The problem involves calculating daily earnings.\"\n   - RIGHT: \"She sells the remaining eggs for $2 per fresh duck egg.\"\n8. Each condition MUST be self-contained and understandable on its own, without reading the other conditions\n   - Do NOT use back-references like \"the remaining\", \"the rest\", \"those\", \"the result\" without context\n   - If a condition refers to something described elsewhere, repeat the necessary context\n   - Example: Instead of \"She sells the rest for $2 each\", write \"She sells the remaining duck eggs at the farmers' market daily for $2 per egg.\"\n   - Think of conditions as an UNORDERED SET of independent facts — each one must make sense if read in isolation\n9. Do NOT over-split: closely related facts about the same event should stay in one condition\n\nExample:\n\nQ: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?\n\nOutput:\n{\n  \"function\": \"How many trees did the grove workers plant today?\",\n  \"arguments\": [\n    {\"argument\": \"There are 15 trees in the grove.\"},\n    {\"argument\": \"Grove workers will plant trees in the grove today.\"},\n    {\"argument\": \"After they are done, there will be 21 trees.\"}\n  ]\n}\n\nNow decompose this problem:\n\nQ: In one year, the number of students on campus doubles at the end of every month. If there are 10 students on campus at the beginning of the year, how many additional students would have joined by the end of May, above and beyond the number of students already on campus at the beginning of the year?\n",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/intent_extraction/dataset_impl/gsm8k/prompts/segmentation.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "e3ef86725f3939d0d928b66cf5f6573dc6f8bb6c02ffd100afa37d8f2dea0743"
+      }
+    ],
+    "prompt_sha256": "9e3f0a6aa2c68f528c0024c6957c48af6ed06728373a12b8096d9132c7362ca8",
+    "role": "generator",
+    "temperature": 0.7
+  },
+  "model": "gpt-5.6-luna",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 810,
+  "stage": "intent_extraction",
+  "task_id": "extracted-gsm8k-test-810",
+  "upstream_max_output_tokens": 8192
+}

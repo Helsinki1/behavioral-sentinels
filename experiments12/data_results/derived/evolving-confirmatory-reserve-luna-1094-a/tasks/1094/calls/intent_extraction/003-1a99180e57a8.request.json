@@ -1,0 +1,32 @@
+{
+  "build_sha256": "234492ebeac86565a9571e124ff48e3a5fd925c3cd4969d4fc8e8859a8d84125",
+  "call": {
+    "call_key": "intent_extraction:003:extraction-verification:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are given a math word problem and its decomposed conditions (broken into pieces). Check if the goal + conditions together contain all the essential information from the original problem.\n\nOutput JSON format:\n{\n  \"coverage\": \"complete\" OR \"incomplete\",\n  \"missing_info\": \"description of missing information (only if incomplete)\"\n}\n\nRules:\n1. Check if ALL numbers, quantities, and relationships are preserved exactly\n2. Check if the question/goal is clear and self-contained\n3. Return \"complete\" if all essential info is present\n4. Return \"incomplete\" only if critical information is missing\n\n⚠️ IMPORTANT: Conditions can be paraphrased (expressed differently) as long as the MEANING is preserved.\n- ✅ OK: Original says \"16 eggs\", condition says \"sixteen eggs\" (same meaning)\n- ✅ OK: Original says \"twice as many\", condition says \"2 times as many\" (same meaning)\n- ✅ OK: Condition rephrases with more context for self-containment\n- ❌ NOT OK: Original says \"sells for $2 per egg\", condition is missing (meaning lost)\n- ❌ NOT OK: Original says \"16 eggs\", condition says \"15 eggs\" (value changed)\n\nExample 1 (Complete):\n\nProblem: Janet's ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?\n\nGoal: How much in dollars does Janet make every day at the farmers' market?\n\nConditions:\n[\n  {\"argument_id\": 1, \"argument\": \"Janet's ducks lay 16 eggs per day.\"},\n  {\"argument_id\": 2, \"argument\": \"Janet eats three eggs for breakfast every morning.\"},\n  {\"argument_id\": 3, \"argument\": \"Janet bakes muffins for her friends every day with four eggs.\"},\n  {\"argument_id\": 4, \"argument\": \"Janet sells the remaining duck eggs at the farmers' market daily for $2 per fresh duck egg.\"}\n]\n\nOutput:\n{\"coverage\": \"complete\"}\n\nExample 2 (Incomplete):\n\nProblem: Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15, and her grandparents twice as much as her parents. How much more money does Betty need?\n\nGoal: How much more money does Betty need to buy the wallet?\n\nConditions:\n[\n  {\"argument_id\": 1, \"argument\": \"Betty is saving money for a new wallet which costs $100.\"},\n  {\"argument_id\": 2, \"argument\": \"Betty currently has only half of the money she needs.\"}\n]\n\nOutput:\n{\"coverage\": \"incomplete\", \"missing_info\": \"Missing: parents give $15, grandparents give twice as much as parents ($30)\"}\n\nNow verify these conditions:\n\nProblem: Ellen decided to play a prank on her friend. She got a case of 12 sodas and shook 3 of them up. Then she took 1 unshaken soda for herself and left. Ellen's brother stopped by and took 1 of the shaken sodas and 2 of the unshaken sodas, then Ellen's friend came along. What is the likelihood, expressed as a percentage, that Ellen's friend gets sprayed with soda from a shaken can?\n\nConditions: [{\"argument_id\": 0, \"argument\": \"What is the likelihood, expressed as a percentage, that Ellen's friend gets sprayed with soda from a shaken can?\"}, {\"argument_id\": 1, \"argument\": \"Ellen got a case containing 12 sodas and shook 3 of the sodas.\"}, {\"argument_id\": 2, \"argument\": \"Ellen took 1 unshaken soda for herself.\"}, {\"argument_id\": 3, \"argument\": \"Ellen's brother took 1 shaken soda and 2 unshaken sodas.\"}, {\"argument_id\": 4, \"argument\": \"Ellen's friend came along after Ellen's brother took the sodas.\"}]\n",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/intent_extraction/dataset_impl/gsm8k/prompts/verification.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "5ad97c8f17444b34bf7364ccc8c2df9b9109124d746bb9971aaabebfafa9cf97"
+      }
+    ],
+    "prompt_sha256": "bfc5cee6e5c313f0e04990a4296b625a32f120b5d798fe96f07896fb62b8e2af",
+    "role": "judge",
+    "temperature": 0.7
+  },
+  "model": "gpt-5.6-sol-judge",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 1094,
+  "stage": "intent_extraction",
+  "task_id": "extracted-gsm8k-test-1094",
+  "upstream_max_output_tokens": 8192
+}

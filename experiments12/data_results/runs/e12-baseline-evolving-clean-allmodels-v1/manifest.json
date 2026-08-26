@@ -1,0 +1,197 @@
+{
+  "arms": [
+    "clean"
+  ],
+  "benchmark_receipts": [
+    {
+      "license_id": "MIT",
+      "name": "task_manifest",
+      "path": "experiments12/generated/evolving-baseline-twenty-composed-a/tasks-t1t7.jsonl",
+      "permission_receipt_sha256": null,
+      "sha256": "329ca8eda51cecda112bf9767669eb1b9b2e9f512f6a054e7e3ada0e9498495a",
+      "upstream_commit": null
+    },
+    {
+      "license_id": "MIT",
+      "name": "evolving_rendered_dataset",
+      "path": "experiments12/generated/evolving-baseline-twenty-composed-a/evolving_intent_gsm8k_frozen.json",
+      "permission_receipt_sha256": null,
+      "sha256": "7a02493d4fa1a8e17a696e305ce82756207473faef75ebfae27171c150ebd2ff",
+      "upstream_commit": "993d6be9597ac03854b46362ccd647eb1bfd267a"
+    },
+    {
+      "license_id": "MIT",
+      "name": "evolving_build_receipt",
+      "path": "experiments12/generated/evolving-baseline-twenty-composed-a/build_receipt.json",
+      "permission_receipt_sha256": null,
+      "sha256": "801d2f6f2c2f369703e4ddefbfb93a65c90b0bcfe9ae685213b54eeb49caf8cb",
+      "upstream_commit": "993d6be9597ac03854b46362ccd647eb1bfd267a"
+    },
+    {
+      "license_id": null,
+      "name": "source_allocation_registry",
+      "path": "experiments12/source_allocation12.json",
+      "permission_receipt_sha256": null,
+      "sha256": "6a686d1a7429ccd648b808f3b4d4554053f0485826c3fe35505f8243c5846bc9",
+      "upstream_commit": null
+    },
+    {
+      "license_id": null,
+      "name": "realized_source_allocation",
+      "path": "experiments12/evolving_baseline_screen12.json",
+      "permission_receipt_sha256": null,
+      "sha256": "996531c7867dbac6a5766f9652b32ce775d137a7d5f7881957ad10063302fa69",
+      "upstream_commit": null
+    }
+  ],
+  "budget_usd": {
+    "hard": {
+      "fireworks": 30.0,
+      "openai": 500.0
+    },
+    "operational": {
+      "fireworks": 24.0,
+      "openai": 400.0
+    }
+  },
+  "created_at": "2026-08-26T12:36:30Z",
+  "experiment": "12",
+  "extra_config": {
+    "n_cells": 200,
+    "n_tasks": 40,
+    "replicates": 1,
+    "source_allocation": {
+      "benchmark": "evolving_intent_gsm8k",
+      "realized_allocation_sha256": "996531c7867dbac6a5766f9652b32ce775d137a7d5f7881957ad10063302fa69",
+      "registry_sha256": "6a686d1a7429ccd648b808f3b4d4554053f0485826c3fe35505f8243c5846bc9",
+      "replacement_source_ids": [
+        "1021"
+      ],
+      "source_ids": [
+        "60",
+        "62",
+        "63",
+        "70",
+        "80",
+        "87",
+        "90",
+        "95",
+        "100",
+        "115",
+        "118",
+        "152",
+        "154",
+        "162",
+        "164",
+        "171",
+        "173",
+        "186",
+        "188",
+        "1021"
+      ],
+      "stage": "baseline_gate",
+      "structural_rejection_source_ids": [
+        "122"
+      ],
+      "wave": null
+    }
+  },
+  "manifest_version": 2,
+  "model_catalog_sha256": "49b50398b32153b8cfcf6fc477fb03e4445f9c15565ff7fee61e03096802fa13",
+  "models": [
+    "gpt-oss-120b",
+    "deepseek-v4-flash-0731",
+    "qwen3p7-plus",
+    "gpt-5.6-luna",
+    "gpt-5.6-terra"
+  ],
+  "operators": [
+    "none"
+  ],
+  "pair_manifest_sha256": "239ca3b941ac6de73dc67d2324fc292b934ec5b25775468c154e7dbcd3bdc070",
+  "passive_monitor_spec": {
+    "sha256": "d181cd08d50d1bcd2e690fc216a22ede9b3120ebca4b4715311d2a839f52799f",
+    "spec": {
+      "baselines": {
+        "context_use": {
+          "formula": "input_tokens / context_window",
+          "version": 1
+        },
+        "turn_clock": {
+          "formula": "completed_turns / task_horizon",
+          "version": 1
+        }
+      },
+      "checkpoint": {
+        "actionable_offset_turns": 1,
+        "every": 1,
+        "schedule": "after_each_nonfinal_task_turn",
+        "source": "clean_trajectory.checkpoint_turns"
+      },
+      "determinism": {
+        "fork_is_discarded": true,
+        "inputs_use_only_completed_public_prefix": true,
+        "reasoning_effort_by_target": {
+          "deepseek-v4-flash-0731": "none",
+          "gpt-5.6-luna": "medium",
+          "gpt-5.6-terra": "medium",
+          "gpt-oss-120b": "low",
+          "qwen3p7-plus": "none"
+        },
+        "temperature": null
+      },
+      "frozen_probe": {
+        "max_output_tokens": 192,
+        "variants": [
+          "current_copy",
+          "recompute"
+        ],
+        "version": 1
+      },
+      "frozen_quiz": {
+        "fire_at_wrong": 1,
+        "generators": {
+          "bfcl_multi_turn": {
+            "name": "bfcl_public_tool_results",
+            "version": 1
+          },
+          "evolving_intent_gsm8k": {
+            "name": "evolving_public_turn_tokens",
+            "version": 1
+          }
+        },
+        "grader_version": 1,
+        "max_output_tokens": 320
+      },
+      "required_methods": [
+        "turn_clock",
+        "context_use",
+        "trace_rules",
+        "frozen_probe",
+        "frozen_quiz",
+        "trace_judge"
+      ],
+      "trace_judge": {
+        "enabled": true,
+        "max_output_tokens": 320,
+        "model": "gpt-5.6-sol-judge",
+        "reasoning_effort": "low",
+        "version": 1
+      },
+      "trace_rules": {
+        "fire_threshold": 0.65,
+        "version": 1
+      },
+      "version": 1
+    }
+  },
+  "randomization_seed": 120120,
+  "repository": {
+    "code_tree_sha256": "851d54e58d109321ba16e246cc5b3abb9a3601cb5c20a666bbda039dcddf085e",
+    "commit": "f76289d5a3d212641b16717606268c5f9a6cad48",
+    "tracked_dirty": false
+  },
+  "run_id": "e12-baseline-evolving-clean-allmodels-v1",
+  "secret_values_recorded": false,
+  "stage": "baseline_gate"
+}

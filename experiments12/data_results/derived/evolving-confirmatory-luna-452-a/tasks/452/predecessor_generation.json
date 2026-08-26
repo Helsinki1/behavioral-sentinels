@@ -1,0 +1,1220 @@
+{
+  "artifact": {
+    "answer": "50",
+    "arguments": [
+      {
+        "argument": "The car drives at 60 miles per hour for 2 hours.",
+        "argument_id": 1,
+        "counterfactual_arguments": [
+          {
+            "counterfactual_argument": "The car drives at 60 miles per hour for 3 hours.",
+            "counterfactual_value": "3 hours",
+            "original_value": "2 hours",
+            "reasoning": "Changed the driving duration from 2 hours to 3 hours. This is a small, plausible change that preserves the sentence structure and remains relevant to calculating the car's average speed."
+          },
+          {
+            "counterfactual_argument": "The car drives at 65 miles per hour for 2 hours.",
+            "counterfactual_value": "65 miles per hour",
+            "original_value": "60 miles per hour",
+            "reasoning": "Changed the car's speed from 60 to 65 miles per hour while keeping the duration and sentence structure unchanged. This is a small, plausible adjustment relevant to calculating the average speed."
+          },
+          {
+            "counterfactual_argument": "The car drives at 60 miles per hour for 2.5 hours.",
+            "counterfactual_value": "2.5 hours",
+            "original_value": "2 hours",
+            "reasoning": "Changed the driving duration from 2 hours to 2.5 hours. This is a small, plausible change that preserves the sentence structure and remains relevant to calculating the average speed."
+          },
+          {
+            "counterfactual_argument": "The car drives at 55 miles per hour for 2 hours.",
+            "counterfactual_value": "55 miles per hour",
+            "original_value": "60 miles per hour",
+            "reasoning": "Changed the car's speed from 60 to 55 miles per hour while keeping the duration and sentence structure unchanged. This is a small, plausible adjustment relevant to calculating the trip's average speed."
+          }
+        ]
+      },
+      {
+        "argument": "The car drives at 30 miles per hour for 1 hour.",
+        "argument_id": 2,
+        "counterfactual_arguments": [
+          {
+            "counterfactual_argument": "The car drives at 30 miles per hour for 2 hours.",
+            "counterfactual_value": "2 hours",
+            "original_value": "1 hour",
+            "reasoning": "Changed the duration of the second part of the trip from 1 hour to 2 hours. This is a small, plausible change that preserves the sentence structure and remains relevant to calculating the car's average speed."
+          },
+          {
+            "counterfactual_argument": "The car drives at 35 miles per hour for 1 hour.",
+            "counterfactual_value": "35 miles per hour",
+            "original_value": "30 miles per hour",
+            "reasoning": "Changed the car's speed from 30 to 35 miles per hour while keeping the duration and sentence structure unchanged. This is a small, plausible change relevant to calculating the trip's average speed."
+          },
+          {
+            "counterfactual_argument": "The car drives at 30 miles per hour for 1.5 hours.",
+            "counterfactual_value": "1.5 hours",
+            "original_value": "1 hour",
+            "reasoning": "Changed the driving duration from 1 hour to 1.5 hours. This is a plausible, small adjustment that keeps the sentence structure and road-trip context unchanged."
+          },
+          {
+            "counterfactual_argument": "The car drives at 30 miles per hour for 1.25 hours.",
+            "counterfactual_value": "1.25 hours",
+            "original_value": "1 hour",
+            "reasoning": "Changed the driving duration from 1 hour to 1.25 hours. This is a small, plausible change that preserves the sentence structure and remains relevant to calculating the car's average speed."
+          }
+        ]
+      }
+    ],
+    "chain_type": [
+      "compute_then_extend",
+      "lookup_then_compute",
+      "lookup_then_compute"
+    ],
+    "counterfactual_info": {
+      "dataset_type": "math",
+      "num_counterfactuals_requested": 4,
+      "successful_counterfactuals": 8,
+      "total_arguments": 2
+    },
+    "fully_specified_question": "A car is on a road trip and drives 60 mph for 2 hours, and then 30 mph for 1 hour. What is the car's average speed in mph during this trip?",
+    "function": "What is the car's average speed in miles per hour during the road trip?",
+    "independence_passed": true,
+    "independence_reason": "Functional independence passed (3/3)",
+    "model_name": "gpt-5.1",
+    "num_arguments": 2,
+    "original_id": 452,
+    "predecessor_functions": [
+      {
+        "counterfactual_arguments": [
+          {
+            "argument": "The car drives at 60 miles per hour for 2 hours.",
+            "argument_id": 1,
+            "is_shared": true
+          },
+          {
+            "argument": "The car uses 0.05 gallons of fuel per mile during the first road segment.",
+            "argument_id": 306,
+            "is_shared": false
+          }
+        ],
+        "entity_sought": "fuel consumption",
+        "is_predecessor": true,
+        "predecessor_function": "How much fuel does the car use during the first part of its road trip?",
+        "taxonomy_type": "T3",
+        "transition_reason": "After calculating fuel usage for the first segment, the user examines another measurable aspect of each road-trip segment by asking about the distances covered.",
+        "transition_type": "compute_then_extend"
+      },
+      {
+        "counterfactual_arguments": [
+          {
+            "argument": "The car drives at 60 miles per hour for 2 hours.",
+            "argument_id": 1,
+            "is_shared": true
+          },
+          {
+            "argument": "The car drives at 30 miles per hour for 1 hour.",
+            "argument_id": 2,
+            "is_shared": true
+          },
+          {
+            "argument": "The speed limit on the first road segment is 65 miles per hour.",
+            "argument_id": 204,
+            "is_shared": false
+          },
+          {
+            "argument": "The speed limit on the second road segment is 35 miles per hour.",
+            "argument_id": 205,
+            "is_shared": false
+          }
+        ],
+        "entity_sought": "speed limit",
+        "is_predecessor": true,
+        "predecessor_function": "What is the posted speed limit for each part of the car's road trip?",
+        "taxonomy_type": "T1",
+        "transition_reason": "After identifying the speed limits for the two road segments, the user naturally asks how far the car traveled during each segment.",
+        "transition_type": "lookup_then_compute"
+      },
+      {
+        "counterfactual_arguments": [
+          {
+            "argument": "The car drives at 60 miles per hour for 2 hours.",
+            "argument_id": 1,
+            "is_shared": true
+          },
+          {
+            "argument": "The car drives at 30 miles per hour for 1 hour.",
+            "argument_id": 2,
+            "is_shared": true
+          },
+          {
+            "argument": "Distance is calculated by multiplying speed in miles per hour by travel time in hours.",
+            "argument_id": 103,
+            "is_shared": false
+          }
+        ],
+        "entity_sought": "distance",
+        "is_predecessor": true,
+        "predecessor_function": "What is the distance covered during each part of the car's road trip?",
+        "taxonomy_type": "T1",
+        "transition_reason": "After determining the distances for both driving segments, the user naturally asks for the car's overall average speed.",
+        "transition_type": "lookup_then_compute"
+      }
+    ],
+    "predecessors": [
+      {
+        "causal_link": "The fuel-use calculation requires determining the first segment's miles traveled, which naturally prompts the user to explicitly ask for the distance covered during each segment.",
+        "entity_sought": "fuel consumption",
+        "full_arguments": [
+          {
+            "argument": "The car drives at 60 miles per hour for 2 hours.",
+            "argument_id": 1,
+            "is_shared": true
+          },
+          {
+            "argument": "The car uses 0.05 gallons of fuel per mile during the first road segment.",
+            "argument_id": 306,
+            "is_shared": false
+          }
+        ],
+        "new_argument_ids": [
+          306
+        ],
+        "new_arguments": [
+          "The car uses 0.05 gallons of fuel per mile during the first road segment."
+        ],
+        "predecessor_function": "How much fuel does the car use during the first part of its road trip?",
+        "reasoning": "The predecessor uses the first segment's speed and duration to calculate distance, then converts that distance into fuel consumption using the new fuel-efficiency condition. The added fuel fact does not affect any later distance, average-speed, or speed-limit answers.",
+        "shared_argument_ids": [
+          1
+        ],
+        "shared_arguments": [
+          "The car drives at 60 miles per hour for 2 hours."
+        ],
+        "taxonomy_type": "T3",
+        "transition_reason": "After calculating fuel usage for the first segment, the user examines another measurable aspect of each road-trip segment by asking about the distances covered.",
+        "transition_type": "compute_then_extend"
+      },
+      {
+        "causal_link": "The speed-limit lookup establishes contextual speed information for each segment, prompting the user to calculate the actual distances using the car's given speeds and travel times.",
+        "entity_sought": "speed limit",
+        "full_arguments": [
+          {
+            "argument": "The car drives at 60 miles per hour for 2 hours.",
+            "argument_id": 1,
+            "is_shared": true
+          },
+          {
+            "argument": "The car drives at 30 miles per hour for 1 hour.",
+            "argument_id": 2,
+            "is_shared": true
+          },
+          {
+            "argument": "The speed limit on the first road segment is 65 miles per hour.",
+            "argument_id": 204,
+            "is_shared": false
+          },
+          {
+            "argument": "The speed limit on the second road segment is 35 miles per hour.",
+            "argument_id": 205,
+            "is_shared": false
+          }
+        ],
+        "new_argument_ids": [
+          204,
+          205
+        ],
+        "new_arguments": [
+          "The speed limit on the first road segment is 65 miles per hour.",
+          "The speed limit on the second road segment is 35 miles per hour."
+        ],
+        "predecessor_function": "What is the posted speed limit for each part of the car's road trip?",
+        "reasoning": "This is a different question from calculating distance or average speed, and it concerns the same car trip and road segments. The new speed-limit facts are separate contextual information and do not affect the distance calculations, which use only the car's speeds and durations.",
+        "shared_argument_ids": [
+          1,
+          2
+        ],
+        "shared_arguments": [
+          "The car drives at 60 miles per hour for 2 hours.",
+          "The car drives at 30 miles per hour for 1 hour."
+        ],
+        "taxonomy_type": "T1",
+        "transition_reason": "After identifying the speed limits for the two road segments, the user naturally asks how far the car traveled during each segment.",
+        "transition_type": "lookup_then_compute"
+      },
+      {
+        "causal_link": "The distance formula provides a factual calculation rule that helps analyze the trip, prompting the related question of average speed across the segments.",
+        "entity_sought": "distance",
+        "full_arguments": [
+          {
+            "argument": "The car drives at 60 miles per hour for 2 hours.",
+            "argument_id": 1,
+            "is_shared": true
+          },
+          {
+            "argument": "The car drives at 30 miles per hour for 1 hour.",
+            "argument_id": 2,
+            "is_shared": true
+          },
+          {
+            "argument": "Distance is calculated by multiplying speed in miles per hour by travel time in hours.",
+            "argument_id": 103,
+            "is_shared": false
+          }
+        ],
+        "new_argument_ids": [
+          103
+        ],
+        "new_arguments": [
+          "Distance is calculated by multiplying speed in miles per hour by travel time in hours."
+        ],
+        "predecessor_function": "What is the distance covered during each part of the car's road trip?",
+        "reasoning": "The question concerns the same car and road trip and uses both shared driving conditions, but it asks for total distance rather than average speed. However, it is a computation rather than a fact or rate lookup.",
+        "shared_argument_ids": [
+          1,
+          2
+        ],
+        "shared_arguments": [
+          "The car drives at 60 miles per hour for 2 hours.",
+          "The car drives at 30 miles per hour for 1 hour."
+        ],
+        "taxonomy_type": "T1",
+        "transition_reason": "After determining the distances for both driving segments, the user naturally asks for the car's overall average speed.",
+        "transition_type": "lookup_then_compute"
+      }
+    ],
+    "question": "A car is on a road trip and drives 60 mph for 2 hours, and then 30 mph for 1 hour. What is the car's average speed in mph during this trip?",
+    "task": "math",
+    "task_id": "extracted-gsm8k-test-452",
+    "verification_details": [
+      {
+        "judgments": [
+          {
+            "argument": "The speed limit on the first road segment is 65 miles per hour.",
+            "problematic": false,
+            "reason": "The car's actual speed is already given as 60 miles per hour, so the speed limit does not help calculate fuel use.",
+            "source_turn": 2
+          },
+          {
+            "argument": "The speed limit on the second road segment is 35 miles per hour.",
+            "problematic": false,
+            "reason": "This concerns a different road segment and is irrelevant to fuel use during the first segment.",
+            "source_turn": 2
+          },
+          {
+            "argument": "Distance is calculated by multiplying speed in miles per hour by travel time in hours.",
+            "problematic": false,
+            "reason": "This is a generic formula rather than a specific identifying fact; it does not materially narrow the answer beyond the target turn's supplied values.",
+            "source_turn": 3
+          }
+        ],
+        "passed": true,
+        "problematic_arguments": [],
+        "target_function": "How much fuel does the car use during the first part of its road trip?",
+        "target_turn": 1
+      },
+      {
+        "judgments": [
+          {
+            "argument": "The car uses 0.05 gallons of fuel per mile during the first road segment.",
+            "problematic": false,
+            "reason": "Fuel consumption does not help determine the posted speed limits, which are already specified by the target turn's own conditions.",
+            "source_turn": 1
+          },
+          {
+            "argument": "Distance is calculated by multiplying speed in miles per hour by travel time in hours.",
+            "problematic": false,
+            "reason": "This is a generic distance formula and provides no identifying information about either road segment's posted speed limit.",
+            "source_turn": 3
+          }
+        ],
+        "passed": true,
+        "problematic_arguments": [],
+        "target_function": "What is the posted speed limit for each part of the car's road trip?",
+        "target_turn": 2
+      },
+      {
+        "judgments": [
+          {
+            "argument": "The car uses 0.05 gallons of fuel per mile during the first road segment.",
+            "problematic": false,
+            "reason": "Fuel consumption does not help calculate the distance of either segment, which is determined directly from speed and time.",
+            "source_turn": 1
+          },
+          {
+            "argument": "The speed limit on the first road segment is 65 miles per hour.",
+            "problematic": false,
+            "reason": "The speed limit is not the car's actual speed and does not meaningfully narrow the answer beyond the given speed of 60 miles per hour.",
+            "source_turn": 2
+          },
+          {
+            "argument": "The speed limit on the second road segment is 35 miles per hour.",
+            "problematic": false,
+            "reason": "The speed limit is not needed because the car's actual speed of 30 miles per hour and travel time are already provided.",
+            "source_turn": 2
+          }
+        ],
+        "passed": true,
+        "problematic_arguments": [],
+        "target_function": "What is the distance covered during each part of the car's road trip?",
+        "target_turn": 3
+      },
+      {
+        "judgments": [
+          {
+            "argument": "The car uses 0.05 gallons of fuel per mile during the first road segment.",
+            "problematic": false,
+            "reason": "Fuel consumption is irrelevant to calculating the time-weighted average speed from the given speeds and travel times.",
+            "source_turn": 1
+          },
+          {
+            "argument": "The speed limit on the first road segment is 65 miles per hour.",
+            "problematic": false,
+            "reason": "The speed limit does not affect the calculation because the car's actual speed on the first segment is already given.",
+            "source_turn": 2
+          },
+          {
+            "argument": "The speed limit on the second road segment is 35 miles per hour.",
+            "problematic": false,
+            "reason": "The speed limit does not affect the calculation because the car's actual speed on the second segment is already given.",
+            "source_turn": 2
+          },
+          {
+            "argument": "Distance is calculated by multiplying speed in miles per hour by travel time in hours.",
+            "problematic": false,
+            "reason": "This is a generic formula rather than a specific identifying fact, and it does not materially narrow the possible answer beyond the target turn's data.",
+            "source_turn": 3
+          }
+        ],
+        "passed": true,
+        "problematic_arguments": [],
+        "target_function": "What is the car's average speed in miles per hour during the road trip?",
+        "target_turn": "final"
+      }
+    ],
+    "verification_passed": true
+  },
+  "artifact_sha256": "b0ac1c7679b4bdbce93dbf70266c5f61f95ada88ec6efe3a649040a704ff2326",
+  "build_sha256": "9f6cc2db49d852968117b6f008c3b3748baf8282fe7659e6ef827aac579d5b04",
+  "calls": [
+    {
+      "accounted_cost_usd": "0.000661",
+      "attempt_event_ids": [
+        "78b768c617e540b598fffb57dc52e08f"
+      ],
+      "call_key": "predecessor_generation:001:predecessor-function-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-luna",
+      "output_sha256": "31c2f76bb334b58c56ad9daa46c2888ede2a59242c94e87c78ea06ee7586fc2b",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/generate_predecessor_gsm8k.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "1f3c1560943ffc7d3d2193d6af7fddd75d4ddaf15ec75d4abc54c0ab9b065d5d"
+        }
+      ],
+      "prompt_sha256": "12b12d8b60f212b1324e9385e3742b25cf842580be7d25386334e457314b5b6e",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/001-03ce80b77537.request.json",
+        "sha256": "177a8f61bfec46cbc869ac6c874bcafa039cfbc2851c58a09eeb129b3f2b5608"
+      },
+      "request_id": "req_572c012ca455477f9aafbc81ce58fd40",
+      "resolved_model_id": "gpt-5.6-luna",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/001-03ce80b77537.response.json",
+        "sha256": "9a618047b3efab3d636bf9a3e3d122407f2505b55a0fb5e0b5809322e2954ead"
+      },
+      "response_id": "resp_01a1790fd40bd367006a8ec9257f3887d2ba965479839d8350",
+      "role": "generator",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 8192,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 8192
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 1715,
+        "output_tokens": 193,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.001570",
+      "attempt_event_ids": [
+        "b02aa507148b49e1a99332dbd52dd397"
+      ],
+      "call_key": "predecessor_generation:002:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "7aafb9bc109191c42cf349593bf205005785c0637ce5d64908a8b523b4b3d01d",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/similarity_check_gsm8k.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "8aaae56a49e3554177b8b0be33c2f0ea097bc79d83bad235cd3da427bd948081"
+        }
+      ],
+      "prompt_sha256": "0e710446760cd39062b2346f8dbb028ead1b417de5930b334d42734d15076808",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/002-b5298abc3217.request.json",
+        "sha256": "ef9c170695331e208614fc5988ec13b19a95f7740ae274c4c9ecd327dc4c70a0"
+      },
+      "request_id": "req_9f4922bcdf0d48498b64e974bb9a42a7",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/002-b5298abc3217.response.json",
+        "sha256": "1dacf814744d6822a126fc4d6a0246054716762e3556c3daeed042e1e0de844a"
+      },
+      "response_id": "resp_0122e9710aa68545006a8ec92886b087d2848ee1883ea1b3c4",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 16,
+        "reasoning_effort": "none",
+        "temperature": null,
+        "upstream_max_output_tokens": 10
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 286,
+        "output_tokens": 7,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.000767",
+      "attempt_event_ids": [
+        "9f018db80c3443478e037787e2b106d4"
+      ],
+      "call_key": "predecessor_generation:003:predecessor-function-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-luna",
+      "output_sha256": "ced92402466abac846e1a5f1e7030eb39b3fc4de27061b2f2f27e7524c7438c0",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/generate_predecessor_gsm8k.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "1f3c1560943ffc7d3d2193d6af7fddd75d4ddaf15ec75d4abc54c0ab9b065d5d"
+        }
+      ],
+      "prompt_sha256": "e8e214d7fae041b70006699d7fc52cc891fbd5bf0acd124cef51fb23816c2192",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/003-ff699e2713ea.request.json",
+        "sha256": "6795eb15dc04f98b67206477545582c70d41e1055cf0d6565fa3b3c8b77a85ce"
+      },
+      "request_id": "req_dd30478858964c1dac4ea06114387181",
+      "resolved_model_id": "gpt-5.6-luna",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/003-ff699e2713ea.response.json",
+        "sha256": "3076c34a87edf8b58b53c7015e766d043567076eb6a7e5a8a964e4175439cdd6"
+      },
+      "response_id": "resp_07b72b164de6ac9e006a8ec92ba44887d2a15a5b94234bff0a",
+      "role": "generator",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 8192,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 8192
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 1972,
+        "output_tokens": 228,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.001570",
+      "attempt_event_ids": [
+        "4b5922e52f15462892151272112b8c10"
+      ],
+      "call_key": "predecessor_generation:004:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "7aafb9bc109191c42cf349593bf205005785c0637ce5d64908a8b523b4b3d01d",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/similarity_check_gsm8k.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "8aaae56a49e3554177b8b0be33c2f0ea097bc79d83bad235cd3da427bd948081"
+        }
+      ],
+      "prompt_sha256": "b913727ebe41a00c73750509122ab6bbd9735445673ebc5fa1267af51bfe8af3",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/004-585dce277a65.request.json",
+        "sha256": "3fe0674c6e2e40bbd30dbe712d7677d6bb07e8e78727857b28a078335d16d322"
+      },
+      "request_id": "req_04ea0377dd334ef7a4e90f63d7faa4ed",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/004-585dce277a65.response.json",
+        "sha256": "c6c5502981a411e5d566253ca4578186fbc528e5dae1aab43a8967530a90d7fd"
+      },
+      "response_id": "resp_0013859639bba63e006a8ec92e1dec87d28cdce510ff419811",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 16,
+        "reasoning_effort": "none",
+        "temperature": null,
+        "upstream_max_output_tokens": 10
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 286,
+        "output_tokens": 7,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.001575",
+      "attempt_event_ids": [
+        "7d0150f5e37c4d2aa6e40f71abb1839c"
+      ],
+      "call_key": "predecessor_generation:005:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "7aafb9bc109191c42cf349593bf205005785c0637ce5d64908a8b523b4b3d01d",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/similarity_check_gsm8k.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "8aaae56a49e3554177b8b0be33c2f0ea097bc79d83bad235cd3da427bd948081"
+        }
+      ],
+      "prompt_sha256": "204688c954e64f2acd8a47595683a1ce1275ad6e2d502a6617b448cf076c18e0",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/005-6d857a552d8f.request.json",
+        "sha256": "6fb5500dc3d7384aaa6536a8a97e8a8ca09c122d3414ac38985c276ea49661e4"
+      },
+      "request_id": "req_331e5507a3244f7eb4c3a8e5234de9ef",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/005-6d857a552d8f.response.json",
+        "sha256": "c2067510dce501005c3257bca6cedcfcbd8bd73fe269bb23cac848ec81f3788c"
+      },
+      "response_id": "resp_091408607feafa90006a8ec92f57a887d2b69327d594d08971",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 16,
+        "reasoning_effort": "none",
+        "temperature": null,
+        "upstream_max_output_tokens": 10
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 287,
+        "output_tokens": 7,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.000753",
+      "attempt_event_ids": [
+        "c159e370dc154b719ea77d0c7acaad3d"
+      ],
+      "call_key": "predecessor_generation:006:predecessor-function-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-luna",
+      "output_sha256": "d13e1d3ebf22977f5f825fb2dd476a32df7fb8a706a1de1e300eecf4e8e35242",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/generate_predecessor_gsm8k.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "1f3c1560943ffc7d3d2193d6af7fddd75d4ddaf15ec75d4abc54c0ab9b065d5d"
+        }
+      ],
+      "prompt_sha256": "43c15748bdf488caee8900a65562bdebdcdd830cc2f21690096d6aeaba4dd7dd",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/006-a4f2a62877e7.request.json",
+        "sha256": "ac1d1541acb5153cb9b1994f3c066d91fecf182a69dca5b6fcbb731cbf1be55a"
+      },
+      "request_id": "req_591272aeb9e7437bbddf339708505200",
+      "resolved_model_id": "gpt-5.6-luna",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/006-a4f2a62877e7.response.json",
+        "sha256": "a642d180e1503caa12aa148e8469857ebd7ba263f225da1a52ea6dda9614ddeb"
+      },
+      "response_id": "resp_05d00a29bc61e95e006a8ec930ce7487d2978d169f1e0d4582",
+      "role": "generator",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 8192,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 8192
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 1996,
+        "output_tokens": 211,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.001570",
+      "attempt_event_ids": [
+        "b8fa1eb311874467ac2d8b4c0d7f12cf"
+      ],
+      "call_key": "predecessor_generation:007:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "7aafb9bc109191c42cf349593bf205005785c0637ce5d64908a8b523b4b3d01d",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/similarity_check_gsm8k.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "8aaae56a49e3554177b8b0be33c2f0ea097bc79d83bad235cd3da427bd948081"
+        }
+      ],
+      "prompt_sha256": "d307735bfb214f13fe6d728f94df675032671a17ec518219694b9852561c440a",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/007-2780f0540d9a.request.json",
+        "sha256": "509ca68c3dd55d88bf7d7c34336214b6aa58eb566fe47253a06bc87ebfad13f4"
+      },
+      "request_id": "req_2d32a9bfc8c9468cb85ebd6c9c6cac5a",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/007-2780f0540d9a.response.json",
+        "sha256": "78cf7c9a4af502226f566ab63b50fb0e068c0a2182ee5424ebfba2794b636bc7"
+      },
+      "response_id": "resp_00bbb93fbfb70def006a8ec9345c5c87d29e249a650e4bb888",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 16,
+        "reasoning_effort": "none",
+        "temperature": null,
+        "upstream_max_output_tokens": 10
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 286,
+        "output_tokens": 7,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.001575",
+      "attempt_event_ids": [
+        "03f458fbe6ab4ad690dc25c8ec64274b"
+      ],
+      "call_key": "predecessor_generation:008:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "7aafb9bc109191c42cf349593bf205005785c0637ce5d64908a8b523b4b3d01d",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/similarity_check_gsm8k.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "8aaae56a49e3554177b8b0be33c2f0ea097bc79d83bad235cd3da427bd948081"
+        }
+      ],
+      "prompt_sha256": "9902dd5fa0c3ca9e7380645d4bff2262da301dfc023a631f90b93526b976285e",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/008-9a1ad2c5aed3.request.json",
+        "sha256": "cb6ec76d2aed6ca05da860af0df6a4231a93e1987ea293576560877da37d180c"
+      },
+      "request_id": "req_9600e5c8354e44a999b3d3aa676a3333",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/008-9a1ad2c5aed3.response.json",
+        "sha256": "41193de78f3ef4a214ffd2b12ea8fbf2f14e61cee809ff458f836a1b8878415f"
+      },
+      "response_id": "resp_0fb6bb93daca5c0a006a8ec935c3c887d29a381592b6c1ecbe",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 16,
+        "reasoning_effort": "none",
+        "temperature": null,
+        "upstream_max_output_tokens": 10
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 287,
+        "output_tokens": 7,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.001575",
+      "attempt_event_ids": [
+        "03e29294ef2746d99fff94eb44541d66"
+      ],
+      "call_key": "predecessor_generation:009:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "7aafb9bc109191c42cf349593bf205005785c0637ce5d64908a8b523b4b3d01d",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/similarity_check_gsm8k.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "8aaae56a49e3554177b8b0be33c2f0ea097bc79d83bad235cd3da427bd948081"
+        }
+      ],
+      "prompt_sha256": "1a88b978f4554d058e3f804112d3e5b1d05ed6b5218af1fd0f911d699a151220",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/009-0c8a907092c4.request.json",
+        "sha256": "c3725c40295a6bf36e85251186037074bb030ce4123e3ec7c964e8e1dc3881ef"
+      },
+      "request_id": "req_7508d0b7d6b14068b6c0e29dca9207c9",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/009-0c8a907092c4.response.json",
+        "sha256": "37864c1813c677f368f7b0e45d73f1ac02c2a54dbf5be62d684c9fd303950f7e"
+      },
+      "response_id": "resp_0f5419832bdd069e006a8ec9374afc87d2aaaea34f47e9a71e",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 16,
+        "reasoning_effort": "none",
+        "temperature": null,
+        "upstream_max_output_tokens": 10
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 287,
+        "output_tokens": 7,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.007810",
+      "attempt_event_ids": [
+        "469deb29695f48e4816084b6ee2319c6"
+      ],
+      "call_key": "predecessor_generation:010:cross-turn-relevance-check:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "fdb41b8193a427e1a876ab3579a3e8048e57da92913ebbd4252c6b91727a879d",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/cross_turn_relevance_check.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "1876b34e8969f096f7fbc1e0026cfa9c28615f90732a21904a9476479c5a805b"
+        }
+      ],
+      "prompt_sha256": "9dbdc5cf9beae1bff8534890a237a8b7f179715a985b3786f6d9b5d80e052d0d",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/010-4e12211bc649.request.json",
+        "sha256": "13fa4853907941ab4893e68ef43fd100baae913f8d96bb02f5b862330e27134c"
+      },
+      "request_id": "req_4a7e9c58f752445abd4218e01a173e5c",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/010-4e12211bc649.response.json",
+        "sha256": "142830fd41382f0b11656001ef598908430c8636e7bcac699e486942fe0b9ebb"
+      },
+      "response_id": "resp_03a18ce68c97b98f006a8ec938cb3487d2a40493d5be38f194",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 8192,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 8192
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 638,
+        "output_tokens": 231,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.006515",
+      "attempt_event_ids": [
+        "a9546826368b4e6a9776d0ce02093ca5"
+      ],
+      "call_key": "predecessor_generation:011:cross-turn-relevance-check:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "33e1ecee67ff0443dd821cefe1822c7fa3514b4e6ae9b75c19e8faec85e8ac46",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/cross_turn_relevance_check.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "1876b34e8969f096f7fbc1e0026cfa9c28615f90732a21904a9476479c5a805b"
+        }
+      ],
+      "prompt_sha256": "4375217d333638b1760d81c71cc9207beb735743220b8c386b49348df84bf6c6",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/011-6d510a10f96a.request.json",
+        "sha256": "b6666beb334cf8a6ea87f15dee4140ee49ba17739239d640112c2ec6c37f4bb2"
+      },
+      "request_id": "req_57d532e863774395b782785d3a837364",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/011-6d510a10f96a.response.json",
+        "sha256": "4c687905c3f8f229d66ec26f3e7cda4b86266139d5a9caeeb5e13e4ecaaac93f"
+      },
+      "response_id": "resp_0afa2d44f360925c006a8ec93cb3b087d2b4fc6904e0cc7ede",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 8192,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 8192
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 651,
+        "output_tokens": 163,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.008040",
+      "attempt_event_ids": [
+        "df835d6839e74f2e85db957404a990b6"
+      ],
+      "call_key": "predecessor_generation:012:cross-turn-relevance-check:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "315f51a717216ce9a56a626702d9d463f478029456a86965d71124ec12f51cc9",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/cross_turn_relevance_check.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "1876b34e8969f096f7fbc1e0026cfa9c28615f90732a21904a9476479c5a805b"
+        }
+      ],
+      "prompt_sha256": "edf0ccbf6c2fe9867c433b7a190ab35dfa3cb96383add1659cafc7cf3db90669",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/012-c009bb5b211f.request.json",
+        "sha256": "75843d1cd7e68a4815e2fe92f6b7cef403f1b95b6257412bd009698c3f6eabab"
+      },
+      "request_id": "req_efe3f86ac74b41939582dbf6b5f0ab56",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/012-c009bb5b211f.response.json",
+        "sha256": "4f7b7a9b7c266038ffa4699242cad65f38c564c5e2a557c18ab062f7ea5ece67"
+      },
+      "response_id": "resp_01870131c0b97098006a8ec940a0d887d2812988a3d6ef7392",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 8192,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 8192
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 656,
+        "output_tokens": 238,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.009315",
+      "attempt_event_ids": [
+        "ab33b41239c94b38a68da4c1cfd8ac36"
+      ],
+      "call_key": "predecessor_generation:013:cross-turn-relevance-check:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "9e8d5a22a4193eda1fa8e00ba10d4087dcf898a8bddbf07ed762c6131347e538",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/cross_turn_relevance_check.txt",
+          "role": "upstream_prompt_used",
+          "sha256": "1876b34e8969f096f7fbc1e0026cfa9c28615f90732a21904a9476479c5a805b"
+        }
+      ],
+      "prompt_sha256": "1c2888ca5241dea2cee91fa077d87f0d4b8864f783ba156dc03be2f75e526922",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/013-62f1d71972cc.request.json",
+        "sha256": "0836602efb7ec39b1b8334b5cbb4eb484bdaf353e241d0de30f242c566421f2d"
+      },
+      "request_id": "req_f257d169076d4a8b9e52d7e2ce1baed5",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/013-62f1d71972cc.response.json",
+        "sha256": "f0737c62c586f648911efcdca3645b1edf560e39f62fb806219c70084e189a44"
+      },
+      "response_id": "resp_0dbfe81a87223f01006a8ec944996887d2b33572edd317c36e",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 8192,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 8192
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 663,
+        "output_tokens": 300,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.002410",
+      "attempt_event_ids": [
+        "b1ae6520c4384a659fdc1a5320ac47ee"
+      ],
+      "call_key": "predecessor_generation:014:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "745729e9dd4cf8de7583d0d322425abf0c4ad0f6787e8b218fa2a5ac93ce827c",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/generate_predecessors.py",
+          "role": "upstream_prompt_used",
+          "sha256": "aa2ef1d61993583d8c6f9d87272fdfc4642e8676167d4d5ff1cdb774af0baa90"
+        }
+      ],
+      "prompt_sha256": "f69d4861c9e77ef0b69b1c87c660df6cd533bc121db7ae2a5b813823c8385e48",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/014-51b5580ba357.request.json",
+        "sha256": "8381c4e8e8aa9670c6b66af3efa8f1acf52d90911714f0a37fec2bfe9d90be83"
+      },
+      "request_id": "req_1c7658f9a2cd495e849edb4e0d468814",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/014-51b5580ba357.response.json",
+        "sha256": "5c98668fcddbce92102057b95904d55cd20d6cc11f004ab0b74ecf73d2aa75d1"
+      },
+      "response_id": "resp_00698fa48e3d1fee006a8ec949509487d299ae9a839414db07",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 2000,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 2000
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 110,
+        "output_tokens": 93,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.003370",
+      "attempt_event_ids": [
+        "5fa3a454a7d148b09857f1ab4d3c8b1d"
+      ],
+      "call_key": "predecessor_generation:015:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "dfd735e6c5cc253210164bfd4ef7d0d131d63e5d991e52b33bd79fc8d5693421",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/generate_predecessors.py",
+          "role": "upstream_prompt_used",
+          "sha256": "aa2ef1d61993583d8c6f9d87272fdfc4642e8676167d4d5ff1cdb774af0baa90"
+        }
+      ],
+      "prompt_sha256": "06739920efb71060ee0b56d73eb05729893cea3c23e7fd6fb58137da8b3d260d",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/015-5056efc5aa2a.request.json",
+        "sha256": "2b6d4cdf4e488793e1a7c4c09c23bb3f2408411b89206fe7c7554dea59df70ca"
+      },
+      "request_id": "req_6ce3d0bc09d34b53b258de78bf28fe76",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/015-5056efc5aa2a.response.json",
+        "sha256": "0172e591f1ea7daffb58304139e58965b178c7051e0eb60f14c5a5bd54e4f987"
+      },
+      "response_id": "resp_0892e501fc52314a006a8ec94c573487d2ad896cdb42bc9c7f",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 2000,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 2000
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 174,
+        "output_tokens": 125,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.002410",
+      "attempt_event_ids": [
+        "b29218023e9e4e5cb8c8828892a97eda"
+      ],
+      "call_key": "predecessor_generation:016:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "745729e9dd4cf8de7583d0d322425abf0c4ad0f6787e8b218fa2a5ac93ce827c",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/generate_predecessors.py",
+          "role": "upstream_prompt_used",
+          "sha256": "aa2ef1d61993583d8c6f9d87272fdfc4642e8676167d4d5ff1cdb774af0baa90"
+        }
+      ],
+      "prompt_sha256": "f69d4861c9e77ef0b69b1c87c660df6cd533bc121db7ae2a5b813823c8385e48",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/016-e6aa824f7615.request.json",
+        "sha256": "07e3b69476df24b8b5aaad66b80252797c39862e52943df3a7ac6dbe35e9b17a"
+      },
+      "request_id": "req_7e3be449bdea4fcea45cdf55e789f295",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/016-e6aa824f7615.response.json",
+        "sha256": "7340dc6ff194a3edb69db9d7e7842b4a4404494d6612dd72a2fef662159890eb"
+      },
+      "response_id": "resp_04fd77676f7739c9006a8ec9519af887d29c23ec50c472825f",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 2000,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 2000
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 110,
+        "output_tokens": 93,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.003390",
+      "attempt_event_ids": [
+        "f482889bd90e435d9353f2d8195e0b21"
+      ],
+      "call_key": "predecessor_generation:017:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "d352a778244045b8ddd96907496e5cc5f67dc0e7efdeaeefd3c7d34c71f6c8db",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/generate_predecessors.py",
+          "role": "upstream_prompt_used",
+          "sha256": "aa2ef1d61993583d8c6f9d87272fdfc4642e8676167d4d5ff1cdb774af0baa90"
+        }
+      ],
+      "prompt_sha256": "06739920efb71060ee0b56d73eb05729893cea3c23e7fd6fb58137da8b3d260d",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/017-54c033f0002c.request.json",
+        "sha256": "5ca113d749b42c0daab83768b848bf739077026d74c00b0ff3cb23724eee1622"
+      },
+      "request_id": "req_6e987d0e34db4e56b02ab7be249f2da4",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/017-54c033f0002c.response.json",
+        "sha256": "bfa881b6af3504d93a26e327f60a2d0908846f39bc2687052a020dd6aa16c179"
+      },
+      "response_id": "resp_050591d3b074fbbc006a8ec9554a6c87d292db525dc1fe9486",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 2000,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 2000
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 174,
+        "output_tokens": 126,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.002890",
+      "attempt_event_ids": [
+        "10085a3b99c7471095919ff3907fef42"
+      ],
+      "call_key": "predecessor_generation:018:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "508b3400b2ef85dece529659f5607b40bdbd88a5ba04ae73e5aed3eb76006f69",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/generate_predecessors.py",
+          "role": "upstream_prompt_used",
+          "sha256": "aa2ef1d61993583d8c6f9d87272fdfc4642e8676167d4d5ff1cdb774af0baa90"
+        }
+      ],
+      "prompt_sha256": "f69d4861c9e77ef0b69b1c87c660df6cd533bc121db7ae2a5b813823c8385e48",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/018-3c10fa8f7a6a.request.json",
+        "sha256": "c404a28d03ed057ddc7980c4eaec4c9bd316f8a86494214bce92d73e1410e481"
+      },
+      "request_id": "req_02dccd91fda64925863c349fdfd370b6",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/018-3c10fa8f7a6a.response.json",
+        "sha256": "f1f59635a6928e553720b00496c86dc0e3e371da8c80c2861c794d06a85a7f72"
+      },
+      "response_id": "resp_03d979fbcb0e2bcf006a8ec959726487d293aac6ede8a9f546",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 2000,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 2000
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 110,
+        "output_tokens": 117,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "accounted_cost_usd": "0.003630",
+      "attempt_event_ids": [
+        "7ebd6163e8d742e392061875460c5ce5"
+      ],
+      "call_key": "predecessor_generation:019:text-generation:a1",
+      "finish_reason": "completed",
+      "model": "gpt-5.6-sol-judge",
+      "output_sha256": "ec60a2265956f93bf48e065c66f55afe6fadd7890ff98c83b9b883476992806a",
+      "prompt_files": [
+        {
+          "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/generate_predecessors.py",
+          "role": "upstream_prompt_used",
+          "sha256": "aa2ef1d61993583d8c6f9d87272fdfc4642e8676167d4d5ff1cdb774af0baa90"
+        }
+      ],
+      "prompt_sha256": "06739920efb71060ee0b56d73eb05729893cea3c23e7fd6fb58137da8b3d260d",
+      "request_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/019-d3ef425f9c17.request.json",
+        "sha256": "fa097ef93add014f0fb326f9d6813b9a05b085e453f4a7772c49c3eda651407b"
+      },
+      "request_id": "req_2f6f7512caff4b749f33969bd33172d3",
+      "resolved_model_id": "gpt-5.6-sol",
+      "response_artifact": {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/generated/evolving-confirmatory-luna-452-a/tasks/452/calls/predecessor_generation/019-d3ef425f9c17.response.json",
+        "sha256": "9cdb559bcfda0bf6efd7643a43c3f217254f51520e1c8fdf37f07ad65bd642fa"
+      },
+      "response_id": "resp_0635c125c8782411006a8ec95bf01087d2a87ed57814e446e0",
+      "role": "judge",
+      "settings": {
+        "output_schema_sha256": null,
+        "provider_max_output_tokens": 2000,
+        "reasoning_effort": "none",
+        "temperature": 1.0,
+        "upstream_max_output_tokens": 2000
+      },
+      "usage": {
+        "cached_input_tokens": 0,
+        "input_tokens": 174,
+        "output_tokens": 138,
+        "reasoning_tokens": 0
+      }
+    }
+  ],
+  "final_bridge_response_sha256": "2d0bc3e31ea6f7d68cc243e4734012783fe711ca6839d2eec6dc75b5a83f7761",
+  "input_sha256": "9bc373b73c0c0cfbfb9d865a28f91972a810b60ebf0344719cd2f7c7a0d3803e",
+  "schema_version": 1,
+  "stage": "predecessor_generation",
+  "status": "complete"
+}

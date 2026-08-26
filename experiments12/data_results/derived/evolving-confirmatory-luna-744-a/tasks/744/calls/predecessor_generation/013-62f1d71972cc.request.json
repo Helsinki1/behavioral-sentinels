@@ -1,0 +1,32 @@
+{
+  "build_sha256": "7e2a51d493a25e8aba6e724bb531d5578082846065afcfb8f8b79ec51ee873c3",
+  "call": {
+    "call_key": "predecessor_generation:013:cross-turn-relevance-check:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are verifying that conditions from one turn in a multi-turn conversation do NOT leak critical identifying information into another turn.\n\n=== CONTEXT ===\n\nIn a multi-turn search conversation, the user changes their question between turns. Each turn has:\n- A GOAL (the user's question)\n- CONDITIONS (clues that help identify the answer)\n\nSome conditions are \"shared\" (from the original dataset — these are fine).\nSome conditions are \"new\" (generated specifically for that turn).\n\nThe turns are causally related (e.g., \"Find the director\" → \"Find the movie by that director\"), so the new conditions may be about related topics. That is expected and acceptable.\n\n=== YOUR TASK ===\n\nDetermine whether the NEW conditions from OTHER turns would **significantly help someone answer** the TARGET turn's question — meaning they would meaningfully narrow down or identify the specific answer.\n\nTARGET TURN:\n  Goal: \"What is the total number of animals Melissa is grooming this week?\"\n  Conditions (this turn's own):\n  - [1] Melissa works as a pet groomer.\n  - [2] This week, Melissa has 8 dogs that need to be bathed, 5 cats that need their nails clipped, 3 birds that need their wings trimmed, and 12 horses that need to be brushed.\n\nNEW CONDITIONS FROM OTHER TURNS:\n  - [Turn 1, ID 103] Melissa works 5 days this week.\n  - [Turn 1, ID 104] She distributes each type of grooming appointment evenly across the 5 workdays.\n  - [Turn 3, ID 104] Melissa charges $25 to bathe each dog.\n  - [Turn 3, ID 105] She charges $18 to clip each cat's nails, $15 to trim each bird's wings, and $40 to brush each horse.\n\n=== JUDGMENT CRITERIA ===\n\nMark a condition as PROBLEMATIC **only if** it meets ALL of these criteria:\n1. It provides a SPECIFIC, CONCRETE fact (not a generic/vague description)\n2. That fact would meaningfully narrow the search space for the TARGET answer\n3. Without this condition, the search space would be substantially larger\n\nMark a condition as FINE if ANY of these apply:\n- It describes a different entity or topic that doesn't help identify the target answer\n- It is generic/vague (e.g., \"well-known\", \"popular\", \"in the same field\")\n- It merely restates information already implied by the shared conditions\n- It describes background context without adding identifying specificity\n- It is about a DIFFERENT turn's puzzle entity, even if in a related domain\n\nIMPORTANT: Be LENIENT. Causal chains naturally share thematic overlap. Only flag conditions that provide a genuine shortcut to answering the target question — something that would make the puzzle significantly easier.\n\n=== OUTPUT FORMAT ===\n\nOutput valid JSON:\n{\n  \"judgments\": [\n    {\n      \"argument\": \"The condition text being judged\",\n      \"source_turn\": 1,\n      \"problematic\": true/false,\n      \"reason\": \"Brief explanation\"\n    }\n  ],\n  \"overall_pass\": true/false,\n  \"problematic_arguments\": [\"List of condition texts that are genuinely problematic, empty if none\"]\n}\n",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/retrospective_expansion/predecessor/prompts/cross_turn_relevance_check.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "1876b34e8969f096f7fbc1e0026cfa9c28615f90732a21904a9476479c5a805b"
+      }
+    ],
+    "prompt_sha256": "8aaff93d475ae636cf24ba394a4a63398b71de758ecc14519849a2bf0b8c9032",
+    "role": "judge",
+    "temperature": 1.0
+  },
+  "model": "gpt-5.6-sol-judge",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 744,
+  "stage": "predecessor_generation",
+  "task_id": "extracted-gsm8k-test-744",
+  "upstream_max_output_tokens": 8192
+}

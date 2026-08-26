@@ -2,7 +2,23 @@
 
 Experiment 12 is the paper experiment for **Active and passive observation
 methods for reasoning and action agent traces**. It is a clean restart: it does
-not reuse old outcomes, and it leaves Experiments 1--11 intact.
+not reuse old outcomes.
+
+## One-minute map
+
+Start with these four places:
+
+| location | what it contains | first thing to open |
+|---|---|---|
+| [`graphs/`](graphs/) | the 11 paper-ready PNG figures | `README.md` |
+| [`data_results/`](data_results/) | frozen inputs, raw runs, and derived analyses | `derived/PAPER_MATERIALS12.md` |
+| [`scripts/`](scripts/) | all Experiment 12 code, tests, and post-hoc builders | `README.md` |
+| [`README.md`](README.md) | study design and operational protocol | this file |
+
+The stable commands remain `python -m experiments12.<module>` even though the
+implementation is grouped under `scripts/`. Third-party repositories and
+virtual environments are deliberately not vendored; pinned sources and setup
+details are recorded in `data_results/inputs/EXTERNAL_SOURCES.md`.
 
 ## Questions, in order
 
@@ -61,7 +77,7 @@ Clock and context-use scores are non-adaptive baselines. Threshold sweeps are
 fit only on calibration tasks. Passive monitors are not trajectory arms: making
 them separate target runs would waste money and destroy the zero-carry claim.
 Every run embeds the same hashed passive-monitor contract from
-`passive_spec12.py`: all six methods, the two matched stateless variants, both
+`scripts/passive_spec12.py`: all six methods, the two matched stateless variants, both
 domain quiz generators and versions, checkpoint timing, decoding settings, and
 the enabled Sol judge/model/output limit. A shadow is reusable only if its spec
 hash and exact method/variant coverage match at every checkpoint.
@@ -186,7 +202,7 @@ separate action-trace observer and signal-quality evidence.
 - GPT-5.6 Sol is an offline trace judge, never task ground truth.
 
 Exact IDs, endpoints, prices, and official source links are frozen in
-`model_prices.json`. Availability is checked through the providers' free
+`data_results/inputs/model_prices.json`. Availability is checked through the providers' free
 `/models` endpoints before a paid call. For mutable OpenAI aliases, every call
 records date, returned model identifier, response/request identifiers when
 available, service tier, settings, and usage.

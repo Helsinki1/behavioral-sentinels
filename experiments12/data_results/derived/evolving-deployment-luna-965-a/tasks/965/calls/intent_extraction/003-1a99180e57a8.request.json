@@ -1,0 +1,32 @@
+{
+  "build_sha256": "3de8f6bf8d77feb7a94deb84f6ed8ddaf134f15a9782ab0d8f217233cfc16bab",
+  "call": {
+    "call_key": "intent_extraction:003:extraction-verification:a1",
+    "max_output_tokens": 8192,
+    "messages": [
+      {
+        "content": "You are given a math word problem and its decomposed conditions (broken into pieces). Check if the goal + conditions together contain all the essential information from the original problem.\n\nOutput JSON format:\n{\n  \"coverage\": \"complete\" OR \"incomplete\",\n  \"missing_info\": \"description of missing information (only if incomplete)\"\n}\n\nRules:\n1. Check if ALL numbers, quantities, and relationships are preserved exactly\n2. Check if the question/goal is clear and self-contained\n3. Return \"complete\" if all essential info is present\n4. Return \"incomplete\" only if critical information is missing\n\n⚠️ IMPORTANT: Conditions can be paraphrased (expressed differently) as long as the MEANING is preserved.\n- ✅ OK: Original says \"16 eggs\", condition says \"sixteen eggs\" (same meaning)\n- ✅ OK: Original says \"twice as many\", condition says \"2 times as many\" (same meaning)\n- ✅ OK: Condition rephrases with more context for self-containment\n- ❌ NOT OK: Original says \"sells for $2 per egg\", condition is missing (meaning lost)\n- ❌ NOT OK: Original says \"16 eggs\", condition says \"15 eggs\" (value changed)\n\nExample 1 (Complete):\n\nProblem: Janet's ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?\n\nGoal: How much in dollars does Janet make every day at the farmers' market?\n\nConditions:\n[\n  {\"argument_id\": 1, \"argument\": \"Janet's ducks lay 16 eggs per day.\"},\n  {\"argument_id\": 2, \"argument\": \"Janet eats three eggs for breakfast every morning.\"},\n  {\"argument_id\": 3, \"argument\": \"Janet bakes muffins for her friends every day with four eggs.\"},\n  {\"argument_id\": 4, \"argument\": \"Janet sells the remaining duck eggs at the farmers' market daily for $2 per fresh duck egg.\"}\n]\n\nOutput:\n{\"coverage\": \"complete\"}\n\nExample 2 (Incomplete):\n\nProblem: Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15, and her grandparents twice as much as her parents. How much more money does Betty need?\n\nGoal: How much more money does Betty need to buy the wallet?\n\nConditions:\n[\n  {\"argument_id\": 1, \"argument\": \"Betty is saving money for a new wallet which costs $100.\"},\n  {\"argument_id\": 2, \"argument\": \"Betty currently has only half of the money she needs.\"}\n]\n\nOutput:\n{\"coverage\": \"incomplete\", \"missing_info\": \"Missing: parents give $15, grandparents give twice as much as parents ($30)\"}\n\nNow verify these conditions:\n\nProblem: A bird decides to leave her summer home in the north and travel to her winter home in the south.  To make the journey, the bird leaves her home flying in a southerly direction for 10 hours at a speed of 30 miles per hour.  Then, the bird turns direction and flies towards the north for 2 hours are a speed of 18 miles per hour.  Finally, the bird changes direction and flies toward the south for 5 hours at a speed of 22 miles per hour before landing at her southern home.  What is the distance, in miles, between the bird's northern and the southern homes?\n\nConditions: [{\"argument_id\": 0, \"argument\": \"What is the distance in miles between the bird's northern home and southern home?\"}, {\"argument_id\": 1, \"argument\": \"The bird flies south for 10 hours at a speed of 30 miles per hour.\"}, {\"argument_id\": 2, \"argument\": \"The bird then flies north for 2 hours at a speed of 18 miles per hour.\"}, {\"argument_id\": 3, \"argument\": \"The bird finally flies south for 5 hours at a speed of 22 miles per hour before landing at her southern home.\"}]\n",
+        "role": "user"
+      }
+    ],
+    "output_schema": null,
+    "prompt_files": [
+      {
+        "path": "/home/davidx/Downloads/behavioral-sentinels/experiments12/external/evolving-intent-pinned/intent_construction/intent_extraction/dataset_impl/gsm8k/prompts/verification.txt",
+        "role": "upstream_prompt_used",
+        "sha256": "5ad97c8f17444b34bf7364ccc8c2df9b9109124d746bb9971aaabebfafa9cf97"
+      }
+    ],
+    "prompt_sha256": "cf2605789e817e885a48cc7b0e89d12d1183bc739f5580f982d377e3e0560d43",
+    "role": "judge",
+    "temperature": 0.7
+  },
+  "model": "gpt-5.6-sol-judge",
+  "provider_max_output_tokens": 8192,
+  "reasoning_effort": "none",
+  "schema_version": 1,
+  "source_id": 965,
+  "stage": "intent_extraction",
+  "task_id": "extracted-gsm8k-test-965",
+  "upstream_max_output_tokens": 8192
+}
