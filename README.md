@@ -1,29 +1,145 @@
 # Paper Contents
 
-Title: Active and passive test-time observation methods for detecting long-horizon performance degradation
+> **Status: proposed revision of the outline (Srikar).** Same scope and the same
+> three studies as the previous draft — this restructures them into one argument
+> and marks every claim with the experiment that currently supports it, so we can
+> see at a glance what is evidenced and what still needs data. Original draft is
+> in git history at `f76289d`.
 
-Abstract: Using active (carry) versus passive (zero-carry) observation methods to analyze their reliability in signaling performance degradation, as well as applying them to agent systems to trigger state regrounding/resets
+**Title (option A, survey framing):** Active and passive test-time observation
+methods for detecting long-horizon performance degradation
+**Title (option B, argument framing):** Observing a long-horizon agent is not
+free: monitor cost, monitor quality, and recovery fidelity
 
-Outline:
+**Abstract.** Practitioners plant "canaries" — small task-irrelevant chores — to
+tell them when an agent has degraded and a session should be restarted. We
+measure whether this works. We find that (i) most canary designs cannot fire at
+all, for a reason we characterise; (ii) carrying one measurably degrades the
+agent it observes; and (iii) the value of *any* monitor is determined less by the
+monitor than by the **recovery operator** it triggers. Under lossy recovery even
+a perfect oracle cannot help; under high-fidelity re-grounding the same signal
+becomes profitable. We quantify the timing value available (+0.059 task
+accuracy), show what destroys it, and give a decision rule for when monitoring is
+worth its cost.
 
-{Potentially touch upon the rumor/theory/urban-legend that you can use "canaries" to signal when to start a new claude code session?}
+## The argument, in order
 
-Across GSM8K on Qwen-27b, GPT-OSS, Deepseek-Flash, and GPT-4-mini, we show that active observation methods introduce an "observer effect" that leads to worse performance on agent tasks due to the additional tasks/reasoning the agent must handle (invasive monitoring) ----- compare with baseline/traditional methods: no monitoring / clock / token limit in context window ------ this is purely just for measuring the precision/recall of these signals at detecting performance degradation within N turns of them firing, this experiment will not have these signals trigger any resets/regrounding ------ we'll show that active method signals are less useful (worse precision/recall) AND cause performance degradation, the reason behind this is because they fire too frequently and too sparsely? ----------- the showcase of our set of active observation methods should span (1) "say my name" (2) "increment this number" (3) a chore that requires recomputation/reasoning for unique answer ------------ we will speak about (a) better performance as chore complexity increases (b) worse "observer effect" as complexity increases (c) reiterate that it's not as good as baseline/trivial methods -------------------------- also cover how ground truth was labeled
+**§1 — The folk theory.** The rumour that a canary tells you when to start a new
+Claude Code session. Nobody has tested it. *(framing)*
 
-Meanwhile, side by side, we show the results of the same experiments but using passive observation methods. We will show our (a) disposable quizzes (b) llm-judge (c) ANOTHER METHOD NEEDED HERE ----------- we'll show that passive observation methods have higher recall/precision than baseline methods, but increase token costs
+**§2 — Most canaries cannot fire, and here is the rule.** A probe only fires if
+its answer **cannot be copied from the model's own previous reply**. The purest
+"dynamic" probe — a counter incremented every single turn — fired **0 times in
+400 trajectories** while the underlying task failed ~78% of the time, because
+`BUILD 27 → BUILD 28` is a local copy that survives total state loss. This gives
+the principled ladder for §3. *[EVIDENCED — exp 2]*
 
-Next, we move onto deploying these signals (baseline/active/passive) into an agent system to trigger resets (compaction of agent state) and regroundings (clearing agent state and seeding summary into system prompt for agent to recollect context) and GIVING THE AGENT AN LLM-GENERATED BREAKDOWN ON GOOD/BAD DECISIONS SO FAR + THINGS TO CAREFUL ON (NEW, NEEDS TO BE DONE) ------------ we show one large bar chart with 3 clusters of bars: one cluster with all the mini-bars of each baseline method, one cluster with all the active-method variants, and one cluster with all the passive-method variants -- we display overall performance on GSM8K using that bar graph --------------- then, we break down further analysis on the niche/specific situations in which each (baseline/active/passive) observation methods perform better (i.e. with lossy compaction methods like clearing the entire state, or under more consistent compaction methods, or no compaction at all form of help-triggering to reorganize agent state like the breakdown) -------- these will serve as our final comments that we will speak about in our conclusion
+**§3 — The observer effect: watching costs something.** Active probes measurably
+degrade the task they observe: **−0.043** (compaction operator), **−0.036**
+(re-grounding), **−0.026** (2×2 control) — replicated across operators and
+benchmarks. Probe ladder spans copy → memory → recomputation, holding output
+length and delimiter fixed. Report (a) signal improves with chore complexity,
+(b) observer effect worsens with complexity, (c) neither beats a trivial
+baseline. *[EVIDENCED — exps 3, 4, 8, 9, 10; the confound-controlled ladder is
+exp 12]*
 
-What we need:
-   - break down "complexity" of the active chore to make sure no variables are confounded: copy-ability, memory load, reasoning load, output length
-   - GSM8K only gives us reasoning traces ---- in order for us to have reasoning + action traces, we should find a lightweight, respected coding/tool-use benchmark(s)
-   - we must keep the "good/bad/be-careful decision breakdown" to something simple that isnt too distracting, or replace w another method
-   - the bar charts wont be enough, the number of graphs we need = num_models x num_benchmarks, and each graph will plot two dimensions (method_used by benchmark-performance/recall-precision/cost)
+  - **Model-dependence, not a constant.** On a larger model with a probe matched
+    to the failure mode the effect **reverses** (+0.021, sig): the chore acts as
+    an attention refresh rather than interference. *[EVIDENCED — exp 9]*
 
+**§4 — Passive observation, side by side.** Three methods: (a) disposable frozen
+quizzes, (b) an outside trace judge, (c) **deterministic zero-carry trace rules**
+— self-consistency checks read off output the agent already produces, at zero
+carrying cost. *(This fills the "ANOTHER METHOD NEEDED HERE" slot in the previous
+draft — it is exp 5/6/8's `Z_trace`, our best-performing signal.)* Ordering is
+monotone in both signal quality and outcome: trace rules (prec 0.783) > frozen
+quiz (0.600) > carried probe (≤0.098). *[EVIDENCED — exp 8, single model]*
 
-Appendix: Foundational Papers to Cite?
-   - 
+  - **The sharper axis is not contamination but *what* you observe.** The frozen
+    quiz has zero contamination and still loses, because it probes a *proxy*
+    (recall 0.087). Endogenous monitors read the failing work itself and have no
+    coupling problem; proxy monitors — injected or not — must be matched to the
+    failure mode. *[PARTIAL — exp 8 mechanism; exp 11 matched-vs-mismatched is
+    underpowered, P2 = +0.027, CI spans zero]*
 
+**§5 — The turn: "monitoring doesn't pay" is the wrong conclusion.** Good timing
+is *genuinely* worth **+0.059 task accuracy (significant)**. So why does no
+monitor capture it? Because the binding constraint is the **recovery operator**,
+not the monitor. *[EVIDENCED — exps 4, 6, 10]*
+
+  - Under **lossy** recovery (agent self-summary), a carried probe corrodes the
+    repair itself: timing is worth +0.059 unencumbered but only +0.028 while
+    carrying a probe (interaction **−0.032**), so a perfect carried sentinel is
+    only break-even (+0.002).
+  - Under **high-fidelity re-grounding** the penalty vanishes — interaction
+    **+0.001**, timing worth the same with a probe (+0.065) as without (+0.063) —
+    and the carried sentinel becomes **profitable (+0.039, sig)**.
+  - This was a **pre-registered mechanism prediction that could have failed.**
+    *[EVIDENCED — exp 10 Study B1]*
+
+**§6 — Deployment.** Signals trigger `compact`, `reground`, and a short
+evidence-tied `GOOD/BAD/WATCH` note, at matched intervention budgets. Report the
+three-cluster bar chart (baseline / active / passive) per model × benchmark.
+*[NEEDS DATA — exp 12]*
+
+  - The one place a monitor **wins**: under lossy recovery the zero-carry trace
+    monitor beats the clock by **+0.075 (sig)**. Narrow — it still loses to not
+    restarting at all — but it is a real positive and belongs in the abstract.
+    *[EVIDENCED — exp 6]*
+  - Regime law: **the lossier the operator, the more timing matters; the cheaper
+    the operator, the more frequency wins.** Under cheap lossless restarts a
+    clock beats a perfect oracle (−0.025, sig). *[EVIDENCED — exps 6, 10]*
+
+**§7 — A decision rule, not a leaderboard.** Score policies by
+`U = success − R·restarts − T·tokens` and take the upper envelope: given your
+restart cost and operator fidelity, which observer to run. Under a lossless
+operator the zero-carry sentinel overtakes the clock once one restart costs
+>0.0027 accuracy-equivalents. *[EVIDENCED — exp 10 Study A]*
+
+**§8 — Methods contribution: the matched-trajectory pitfall.** If your instrument
+perturbs the system it measures, scoring it on its own trajectories while scoring
+baselines on clean ones inflates it mechanically — the base rate shifts and
+precision rises for *any* signal, including a clock. This flipped one of our own
+headline results from "beats every baseline" to **0 wins / 2 ties / 22 losses**.
+Generalises to anyone evaluating compaction, reflection, self-critique or
+guardrails. *[EVIDENCED — exp 3 re-analysis]*
+
+**§9 — Honest ending.** There is +0.059 of measurable value in intervention
+timing. We show what destroys it, what preserves it, and that **no existing
+monitor yet claims it** — with the frontier a monitor must clear stated
+explicitly.
+
+## What we still need
+
+  - **A second/third model on §2, §5, §7.** Everything load-bearing there is one
+    small open model. Biggest hole in the paper. *(exp 12 should close it)*
+  - **Check the degradation screen first when exp 12 lands.** In exp 9 only 1 of
+    4 models actually degraded; bigger models may not degrade enough to monitor,
+    which would yield nulls everywhere rather than confirmation. Screen on the
+    no-monitoring arm before interpreting any contrast.
+  - **Commit exp 12's aggregate results.** `artifacts/` and `generated/` are
+    gitignored; summary metrics carry no licensing risk (only benchmark data
+    does), and nothing is checkable without them.
+  - Break down active-chore "complexity" without confounds: copy-ability, memory
+    load, reasoning load, output length. *(exp 2 gives the copy-ability axis;
+    exp 12's ladder holds length/delimiter fixed)*
+  - Reasoning **+ action** traces — BFCL multi-turn covers this; GSM8K alone
+    gives only reasoning.
+  - Keep the `GOOD/BAD/WATCH` breakdown simple enough not to be a confound of its
+    own; its cost is reported separately and it is never described as observation.
+  - Graph count = models × benchmarks, each plotting method × (performance /
+    precision-recall / cost).
+  - Decide **in advance** how a disagreement between exp 12 and exps 1–11 is
+    resolved. Exp 12 is a clean restart, so it re-measures rather than confirms;
+    deciding after seeing the sign is how results get rationalised.
+
+## Appendix: papers to cite
+
+  - *LLMs Get Lost in Multi-Turn Conversation* (arXiv:2505.06120) — the sharded
+    benchmark and the premature-commitment failure mode.
+  - Intervention Paradox (arXiv:2602.03338) — signal quality vs downstream gain.
+  - "Doomed from the Start", TACT, Trust Trajectory — early-failure prediction
+    from activations/trajectories (see `README.txt`).
 
 ---
 
