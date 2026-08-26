@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "purpose": "Select three structurally renderable smoke tasks before any target-model trajectory is run.",
+  "candidate_source_ids_in_order": [12, 36, 40, 43, 49, 50, 60, 62, 63, 70],
+  "target_valid_tasks": 3,
+  "maximum_attempts_per_candidate": 1,
+  "generator_model": "gpt-5.6-luna",
+  "generator_reasoning_effort": "none",
+  "judge_model": "gpt-5.6-sol-judge",
+  "judge_reasoning_effort": "none",
+  "seed": 42,
+  "acceptance": {
+    "t1_user_turns": 1,
+    "t7_user_turns": 7,
+    "upstream_stages_must_validate": true,
+    "upstream_rule_based_renderer_must_attest": true,
+    "target_model_outcomes_available_at_selection": false
+  },
+  "excluded_audit_candidates": {
+    "14": "Multiple construction-model diagnostics failed upstream predecessor/render validation.",
+    "16": "Pre-plan Luna diagnostic failed upstream predecessor validation."
+  },
+  "screen_plan_correction": {
+    "reason": "The first draft listed numerical IDs that are not members of the pinned official 200-ID evaluation set. They were rejected by the provenance gate without any model call. The replacement order is the next official IDs and was frozen before their construction or any target-model run."
+  },
+  "invalidated_infrastructure_attempts": {
+    "source_ids": [12, 36, 40, 43, 49, 50, 60],
+    "reason": "The bridge had been invoked with Python -I, which ignores PYTHONHASHSEED. The pinned upstream converts sets to prompt-order lists, so replay diverged across subprocesses. These attempts are audit/cost evidence only and do not count against the one valid construction attempt per candidate. Screening restarts in the same order after a deterministic -s -P invocation regression test passed."
+  }
+}

@@ -1,6 +1,6 @@
 # Paper Contents
 
-Title: Active and passive observation methods for reasoning and action agent traces
+Title: Active and passive test-time observation methods for detecting long-horizon performance degradation
 
 Abstract: Using active (carry) versus passive (zero-carry) observation methods to analyze their reliability in signaling performance degradation, as well as applying them to agent systems to trigger state regrounding/resets
 

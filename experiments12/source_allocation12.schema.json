@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://behavioral-sentinels.local/experiment12/source-allocation.schema.json",
+  "title": "Experiment 12 source allocation registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema_version",
+    "artifact_type",
+    "selection_frozen_before_target_outcomes",
+    "cross_stage_reuse_forbidden",
+    "benchmarks"
+  ],
+  "properties": {
+    "$schema": {"const": "source_allocation12.schema.json"},
+    "schema_version": {"const": 1},
+    "artifact_type": {"const": "experiment12_source_allocation_registry"},
+    "selection_frozen_before_target_outcomes": {"const": true},
+    "cross_stage_reuse_forbidden": {"const": true},
+    "benchmarks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evolving_intent_gsm8k", "bfcl_multi_turn"],
+      "properties": {
+        "evolving_intent_gsm8k": {"$ref": "#/$defs/benchmark"},
+        "bfcl_multi_turn": {"$ref": "#/$defs/benchmark"}
+      }
+    }
+  },
+  "$defs": {
+    "sourceIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 128}
+    },
+    "allocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_ids", "waves"],
+      "properties": {
+        "source_ids": {"$ref": "#/$defs/sourceIds"},
+        "waves": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/$defs/sourceIds"}
+        }
+      }
+    },
+    "exclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "reason_code"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "reason_code": {
+          "enum": ["prior_generation_diagnostic", "structural_screen_rejection"]
+        }
+      }
+    },
+    "benchmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_namespace",
+        "allocation_rule",
+        "allocations",
+        "diagnostic_exclusions",
+        "structural_failure_reserve"
+      ],
+      "properties": {
+        "source_namespace": {"type": "string", "minLength": 1},
+        "allocation_rule": {"type": "string", "minLength": 1},
+        "allocations": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "smoke",
+            "baseline_gate",
+            "calibration",
+            "confirmatory",
+            "deployment"
+          ],
+          "properties": {
+            "smoke": {"$ref": "#/$defs/allocation"},
+            "baseline_gate": {"$ref": "#/$defs/allocation"},
+            "calibration": {"$ref": "#/$defs/allocation"},
+            "confirmatory": {"$ref": "#/$defs/allocation"},
+            "deployment": {"$ref": "#/$defs/allocation"}
+          }
+        },
+        "diagnostic_exclusions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/exclusion"}
+        },
+        "structural_failure_reserve": {"$ref": "#/$defs/sourceIds"}
+      }
+    }
+  }
+}
