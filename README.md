@@ -14,6 +14,12 @@ Meanwhile, side by side, we show the results of the same experiments but using p
 
 Next, we move onto deploying these signals (baseline/active/passive) into an agent system to trigger resets (compaction of agent state) and regroundings (clearing agent state and seeding summary into system prompt for agent to recollect context) and GIVING THE AGENT AN LLM-GENERATED BREAKDOWN ON GOOD/BAD DECISIONS SO FAR + THINGS TO CAREFUL ON (NEW, NEEDS TO BE DONE) ------------ we show one large bar chart with 3 clusters of bars: one cluster with all the mini-bars of each baseline method, one cluster with all the active-method variants, and one cluster with all the passive-method variants -- we display overall performance on GSM8K using that bar graph --------------- then, we break down further analysis on the niche/specific situations in which each (baseline/active/passive) observation methods perform better (i.e. with lossy compaction methods like clearing the entire state, or under more consistent compaction methods, or no compaction at all form of help-triggering to reorganize agent state like the breakdown) -------- these will serve as our final comments that we will speak about in our conclusion
 
+What we need:
+   - break down "complexity" of the active chore to make sure no variables are confounded: copy-ability, memory load, reasoning load, output length
+   - GSM8K only gives us reasoning traces ---- in order for us to have reasoning + action traces, we should find a lightweight, respected coding/tool-use benchmark(s)
+   - we must keep the "good/bad/be-careful decision breakdown" to something simple that isnt too distracting, or replace w another method
+   - the bar charts wont be enough, the number of graphs we need = num_models x num_benchmarks, and each graph will plot two dimensions (method_used by benchmark-performance/recall-precision/cost)
+
 
 Appendix: Foundational Papers to Cite?
    - 
