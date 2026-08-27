@@ -1,6 +1,6 @@
 # Paper Contents
 
-> **Status: proposed revision of the outline (Srikar).** Same scope and the same
+> **Status: proposed revision of the outline .** Same scope and the same
 > three studies as the previous draft — this restructures them into one argument
 > and marks every claim with the experiment that currently supports it, so we can
 > see at a glance what is evidenced and what still needs data. Original draft is
