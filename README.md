@@ -1,3 +1,5 @@
+https://docs.google.com/document/d/1O0av7AuqblknIp0bRy9cyR2gbS_wmhwoOc5z-gA-YNg/edit?tab=t.0
+
 # Paper Contents
 
 > **Status: proposed revision of the outline (Srikar).** Same scope and the same
