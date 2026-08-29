@@ -1,0 +1,42 @@
+\begin{tikzpicture}[
+  font=\sffamily\scriptsize,
+  >=Latex,
+  task/.style={rounded corners=3pt, draw=agentblue!70, fill=agentblue!8,
+    minimum width=2.35cm, minimum height=0.82cm, align=center, line width=0.65pt},
+  sentinel/.style={rounded corners=3pt, draw=sentinelorange!85!black,
+    fill=sentinelorange!12, minimum width=2.35cm, minimum height=0.82cm,
+    align=center, line width=0.65pt},
+  agent/.style={circle, draw=agentblue, fill=agentblue!15, minimum size=1.22cm,
+    align=center, line width=0.8pt, font=\sffamily\small\bfseries},
+  output/.style={rounded corners=3pt, draw=recoverygreen!85!black,
+    fill=recoverygreen!11, minimum width=1.95cm, minimum height=0.72cm,
+    align=center, line width=0.65pt},
+  probe/.style={rounded corners=3pt, draw=sentinelorange!85!black,
+    fill=sentinelorange!12, minimum width=1.95cm, minimum height=0.72cm,
+    align=center, line width=0.65pt}
+]
+  \node[task] (task) at (0,0.86) {Primary task\\goals + state};
+  \node[sentinel] (sentinel) at (0,-0.86) {Behavioral sentinel\\recompute $s_t$};
+  \node[agent] (agent) at (3.15,0) {Agent};
+  \node[output] (answer) at (6.30,0.86) {Task answer};
+  \node[probe] (probe) at (6.30,-0.86) {Probe response};
+
+  \draw[->, line width=0.72pt, agentblue] (task.east) -- ++(0.52,0)
+    |- node[pos=0.22, above, text=black!68] {task instruction} (agent.north west);
+  \draw[->, line width=0.72pt, sentinelorange!90!black] (sentinel.east) -- ++(0.52,0)
+    |- node[pos=0.22, below, text=black!68] {carried instruction} (agent.south west);
+  \draw[->, line width=0.72pt, recoverygreen!85!black] (agent.north east) -- ++(0.55,0)
+    |- node[pos=0.76, above, text=black!68] {primary behavior} (answer.west);
+  \draw[->, line width=0.72pt, sentinelorange!90!black] (agent.south east) -- ++(0.55,0)
+    |- node[pos=0.76, below, text=black!68] {monitor signal} (probe.west);
+
+  \draw[->, dashed, line width=0.7pt, warningred]
+    (probe.south) to[out=-115,in=-25]
+    node[below, align=center, text=warningred] {persists in context\\and changes later behavior}
+    (agent.south east);
+
+  \begin{scope}[on background layer]
+    \node[fit=(sentinel)(agent)(probe), rounded corners=7pt, fill=sentinelorange!3,
+      draw=sentinelorange!25, inner sep=7pt] {};
+  \end{scope}
+\end{tikzpicture}

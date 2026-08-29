@@ -1,0 +1,48 @@
+\begin{tikzpicture}[
+  font=\sffamily\scriptsize,
+  >=Latex,
+  monitor/.style={rounded corners=4pt, minimum width=2.25cm, minimum height=0.72cm,
+    align=center, line width=0.65pt},
+  agent/.style={circle, draw=agentblue, fill=agentblue!15, minimum size=1.30cm,
+    align=center, line width=0.8pt, font=\sffamily\small\bfseries},
+  stage/.style={rounded corners=4pt, draw=black!48, fill=softgray,
+    minimum width=1.72cm, minimum height=0.68cm, align=center, line width=0.65pt},
+  recovery/.style={rounded corners=4pt, draw=recoverygreen!80!black,
+    fill=recoverygreen!10, minimum width=1.74cm, minimum height=0.68cm,
+    align=center, line width=0.65pt}
+]
+  \node[agent] (agent) at (0,0) {Agent};
+  \node[monitor, draw=probeviolet, fill=probeviolet!11] (internal) at (3.05,1.35)
+    {Internal probe\\hidden activations};
+  \node[monitor, draw=passiveteal, fill=passiveteal!11] (passive) at (3.05,0)
+    {Passive monitor\\observable trace};
+  \node[monitor, draw=sentinelorange!90!black, fill=sentinelorange!12] (active) at (3.05,-1.35)
+    {Active monitor\\carried sentinel};
+
+  \node[stage] (alarm) at (6.15,0) {Alarm\\$M_t=1$};
+  \node[stage] (policy) at (8.35,0) {Intervention\\policy};
+  \node[recovery] (compact) at (10.65,0.72) {Lossy\\compaction};
+  \node[recovery] (reground) at (10.65,-0.72) {Deterministic\\re-grounding};
+
+  \draw[->, dashed, line width=0.68pt, probeviolet]
+    (agent.north east) -- node[above, sloped, text=black!65] {read} (internal.west);
+  \draw[->, dashed, line width=0.68pt, passiveteal]
+    (agent.east) -- node[above, text=black!65] {read} (passive.west);
+  \draw[->, line width=0.82pt, sentinelorange!90!black]
+    (active.west) -- node[below, sloped, text=warningred] {writes state} (agent.south east);
+
+  \draw[->, line width=0.64pt, probeviolet] (internal.east) to[out=0,in=145] (alarm.north west);
+  \draw[->, line width=0.64pt, passiveteal] (passive.east) -- (alarm.west);
+  \draw[->, line width=0.64pt, sentinelorange!90!black] (active.east) to[out=0,in=215] (alarm.south west);
+  \draw[->, line width=0.72pt, black!60] (alarm) -- (policy);
+  \draw[->, line width=0.72pt, recoverygreen!80!black] (policy.east) -- (compact.west);
+  \draw[->, line width=0.72pt, recoverygreen!80!black] (policy.east) -- (reground.west);
+
+  \begin{scope}[on background layer]
+    \node[fit=(internal)(passive)(active), rounded corners=7pt, fill=black!1,
+      draw=black!16, inner sep=7pt, label={[font=\sffamily\scriptsize\bfseries]above:Observation}] {};
+    \node[fit=(compact)(reground), rounded corners=7pt, fill=recoverygreen!3,
+      draw=recoverygreen!24, inner sep=6pt,
+      label={[font=\sffamily\scriptsize\bfseries]above:Recovery}] {};
+  \end{scope}
+\end{tikzpicture}
