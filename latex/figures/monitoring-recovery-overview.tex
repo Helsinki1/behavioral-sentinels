@@ -1,0 +1,77 @@
+% Figure 1 --- the two axes of the paper.
+%   (a) how a monitor observes, and whether that observation enters the trajectory
+%   (b) what happens after it fires, and how much true state survives
+% Explicit coordinates are used throughout so the layout is predictable.
+% Requires only tikz libraries already loaded in the preamble
+% (arrows.meta, backgrounds, fit, positioning).
+\begin{tikzpicture}[
+    font=\small,
+    turn/.style ={draw=agentblue!55, fill=agentblue!8, rounded corners=2pt,
+                  minimum width=11mm, minimum height=6.5mm, inner sep=1pt, align=center,
+                  font=\footnotesize},
+    mon/.style  ={draw, rounded corners=2pt, minimum width=30mm, minimum height=10mm,
+                  inner sep=2pt, align=center, font=\scriptsize},
+    op/.style   ={draw, rounded corners=2pt, minimum width=44mm, minimum height=11mm,
+                  inner sep=2pt, align=center, font=\scriptsize},
+    panel/.style={font=\footnotesize\bfseries, anchor=west},
+    note/.style ={font=\scriptsize\itshape, text=black!55, align=left},
+    read/.style ={-{Stealth[length=1.8mm]}, thick, draw=black!45},
+    flow/.style ={-{Stealth[length=1.6mm]}, draw=agentblue!60},
+    write/.style={-{Stealth[length=1.8mm]}, thick, dashed, draw=sentinelorange}
+  ]
+
+  %% ============================== panel (a) : observation
+  \node[panel] at (0,3.05) {(a)\, How the monitor observes};
+
+  \foreach \i/\lbl in {0/$t$, 1/$t{+}1$, 2/$t{+}2$, 3/$t{+}3$}
+    \node[turn] (t\i) at ({0.55+\i*1.35}, 2.30) {\lbl};
+  \foreach \a/\b in {0/1, 1/2, 2/3} \draw[flow] (t\a) -- (t\b);
+  \node[note] at (6.05,2.30) [anchor=west] {agent trajectory};
+
+  \node[mon, draw=probeviolet, fill=probeviolet!8] (internal) at (2.6,3.55)
+       {internal probe\\reads hidden activations};
+  \draw[read, draw=probeviolet] (t1.north) -- (t1.north |- internal.south);
+
+  \node[mon, draw=passiveteal, fill=passiveteal!8] (passive) at (1.35,0.95)
+       {\textbf{passive} monitor\\reads the emitted trace};
+  \node[mon, draw=sentinelorange, fill=sentinelorange!10] (active) at (5.05,0.95)
+       {\textbf{active} monitor\\adds a chore to the context};
+
+  \draw[read, draw=passiveteal]    (t1.south) -- (passive.north);
+  \draw[read, draw=sentinelorange] (t2.south) -- (active.north);
+  \draw[write] (active.east) -- (6.85,0.95) -- (6.85,2.30) -- (t3.east);
+
+  \node[note, text=sentinelorange, text width=52mm] at (0.1,0.05) [anchor=north west]
+       {only the active monitor writes back: the observation becomes part of the
+        trajectory it is measuring};
+
+  %% ============================== panel (b) : recovery
+  \node[panel] at (0,-1.25) {(b)\, What happens when it fires};
+
+  \node[mon, draw=warningred, fill=warningred!8, minimum width=24mm]
+       (alarm) at (1.15,-2.25) {signal fires\\degradation suspected};
+
+  \node[op, draw=warningred, fill=warningred!6]     (compact)  at (4.60,-1.65)
+       {\textbf{compaction} (lossy)\\the \emph{agent} summarises its own state;\\
+        errors it has already made survive};
+  \node[op, draw=recoverygreen, fill=recoverygreen!8] (reground) at (4.60,-2.95)
+       {\textbf{re-grounding} (deterministic)\\the \emph{harness} rebuilds state\\
+        from an external record};
+
+  \draw[read, draw=warningred]     (alarm.east) -- (2.75,-2.25) -- (2.75,-1.65) -- (compact.west);
+  \draw[read, draw=recoverygreen]  (alarm.east) -- (2.75,-2.25) -- (2.75,-2.95) -- (reground.west);
+
+  \node[turn, minimum width=14mm] (r1) at (8.05,-1.65) {resume};
+  \node[turn, minimum width=14mm] (r2) at (8.05,-2.95) {resume};
+  \draw[read, draw=warningred]    (compact.east)  -- (r1.west);
+  \draw[read, draw=recoverygreen] (reground.east) -- (r2.west);
+
+  \node[note, text width=90mm] at (0.1,-3.75) [anchor=north west]
+       {The same monitor can help or hurt depending on which branch it triggers.};
+
+  \begin{scope}[on background layer]
+    \node[fit=(internal)(active)(t3), draw=black!15, rounded corners=3pt, inner sep=3.5mm] {};
+    \node[fit=(alarm)(compact)(reground)(r1)(r2), draw=black!15, rounded corners=3pt,
+          inner sep=3.5mm] {};
+  \end{scope}
+\end{tikzpicture}

@@ -61,13 +61,20 @@ Let $M_t$ denote a monitor alarm at turn $t$, $F_{>t}$ a subsequent failure, $\p
 
 We argue this view is incomplete, for two reasons. First, a runtime monitor is not necessarily a passive observer of the trajectory it measures. Second, the alarm is only useful insofar as the system does something with it, and what it does turns out to matter more than the alarm itself.
 
-We explore a method of monitoring that introduces additional instructions or computations directly into the agent context, separate from the original task.
+We explore a method of monitoring that introduces additional instructions or computations directly into the agent context, separate from the original task (Figure~\ref{fig:overview}).
 
 \begin{figure}[t]
   \centering
-  \input{figures/behavioral-sentinel-diagram}
-  \caption{A behavioral sentinel is carried beside the primary task. Its response can warn of degradation, but the additional instruction and state also become part of the trajectory being measured.}
-  \label{fig:behavioral-sentinel}
+  \input{figures/monitoring-recovery-overview}
+  \caption{The two axes this paper varies. \textbf{(a)} Monitors differ in whether the
+  observation enters the trajectory being measured: internal probes and passive monitors
+  read only, while an active behavioral sentinel adds a chore to the agent's context and
+  therefore becomes part of what it measures. \textbf{(b)} When a signal fires, the
+  recovery mechanism determines how much true state survives: agent-generated compaction
+  preserves whatever the model still believes, including errors, while deterministic
+  re-grounding rebuilds state from an external record. We find that the value of a
+  monitor depends on which branch of (b) it triggers.}
+  \label{fig:overview}
 \end{figure}
 
 We study one such class of monitors, which we call \emph{behavioral sentinels}: canaries that an agent must maintain throughout a task and whose degradation can serve as a warning signal. For example, an agent might be asked to remember and update a small piece of state while simultaneously completing its primary task. The intuition is that if the agent fails to maintain the sentinel before failing the underlying task, the sentinel provides an early warning signal.
@@ -91,14 +98,7 @@ Our work makes three primary contributions:
 
 Recent work has explored detecting degradation in agents before task completion. \emph{Doomed from the Start} \citep{ruan2026doomed} uses probes over internal model activations to predict task failure and terminate struggling trajectories. \emph{TACT} \citep{sui2026tact} similarly detects agent drift from internal activations and uses activation steering to mitigate it during execution. Other work introduces explicit diagnostic probes: \emph{Canary Tools} \citep{anand2026canary} inserts adversarially designed tools into an agent's context to expose weaknesses in tool-selection reasoning.
 
-Together, these methods show that agent failure can often be detected before task completion, whether from internal representations, observed trajectories, or introduced probes.
-
-\begin{figure}[t]
-  \centering
-  \input{figures/monitor-taxonomy-diagram}
-  \caption{Three monitoring methods and their relationship to the agent. Internal probes read hidden activations, passive monitors read the observable trace, and active monitors write additional state into the trajectory. Each signal ultimately controls an intervention and recovery mechanism.}
-  \label{fig:monitor-taxonomy}
-\end{figure}
+Together, these methods show that agent failure can often be detected before task completion, whether from internal representations, observed trajectories, or introduced probes; Figure~\ref{fig:overview}(a) places the three families side by side.
 
 \subsection{What gap remains}
 
@@ -219,7 +219,7 @@ The controlled coding study ($n=100$ paired tasks) isolates whether favorable ti
 
 The two operators diverge once a probe is carried. Under compaction, carrying the probe leaves only $0.823\rightarrow0.851$ ($+0.028$, CI $[-0.007,+0.062]$), so a perfectly timed carried sentinel is indistinguishable from no intervention at all ($+0.002$, CI $[-0.037,+0.040]$). Under re-grounding the same probe with the same timing yields $0.823\rightarrow0.888$ ($+0.065$, CI $[+0.035,+0.095]$) and is profitable relative to no intervention ($+0.039$, CI $[+0.007,+0.072]$). Consistently, carrying costs more when resets occur ($-0.058$, CI $[-0.090,-0.026]$) than when they do not ($-0.026$, CI $[-0.058,+0.007]$).
 
-The corresponding interaction of Equation~\ref{eq:interaction} is $-0.032$ (CI $[-0.075,+0.011]$) under compaction and $+0.001$ (CI $[-0.041,+0.042]$) under re-grounding. Neither interaction is individually distinguishable from zero at $n=100$; the claim rests on the pattern of contrasts above, in which the timing value while carrying a probe and the net value of a perfectly timed carried sentinel both cross from indistinguishable to significantly positive when the operator changes. The direction of this shift was registered as a prediction before the re-grounding condition was run. This oracle is defined only for the GPT-OSS-20B controlled study; the deployment comparisons use natural firing times and have no oracle arm.
+Figure~\ref{fig:oracle-timing} shows the four cells under both operators. The corresponding interaction of Equation~\ref{eq:interaction} is $-0.032$ (CI $[-0.075,+0.011]$) under compaction and $+0.001$ (CI $[-0.041,+0.042]$) under re-grounding. Neither interaction is individually distinguishable from zero at $n=100$; the claim rests on the pattern of contrasts above, in which the timing value while carrying a probe and the net value of a perfectly timed carried sentinel both cross from indistinguishable to significantly positive when the operator changes. The direction of this shift was registered as a prediction before the re-grounding condition was run. This oracle is defined only for the GPT-OSS-20B controlled study; the deployment comparisons use natural firing times and have no oracle arm.
 
 \begin{figure}[t]
   \centering
@@ -230,14 +230,18 @@ The corresponding interaction of Equation~\ref{eq:interaction} is $-0.032$ (CI $
 
 \subsection{End-to-end utility depends on the monitor--recovery pair}
 
-The natural-policy recovery deployment covers GPT-5.6 Luna on 40 Evolving Intent tasks. Equal-weighting the six displayed monitoring methods, deterministic re-grounding reaches $75.0\%$ success, the quote-only WATCH note $74.6\%$, monitored no-state-action $72.9\%$, and lossy compaction $59.6\%$. These averages hide the central interaction. Active recomputation improves from $72.5\%$ with compaction to $85.0\%$ with re-grounding, whereas selected passive methods show the opposite descriptive pattern: compaction exceeds re-grounding by $5.0$ points for trace rules and $2.5$ points for frozen recomputation, and trace judge ties. Neither intervening nor abstaining is uniformly best; the outcome depends on which monitor and recovery operator are paired.
+The natural-policy recovery deployment covers GPT-5.6 Luna on 40 Evolving Intent tasks. Equal-weighting the six displayed monitoring methods, deterministic re-grounding reaches $75.0\%$ success, the quote-only WATCH note $74.6\%$, monitored no-state-action $72.9\%$, and lossy compaction $59.6\%$. These averages hide the central interaction. Active recomputation improves from $72.5\%$ with compaction to $85.0\%$ with re-grounding, whereas selected passive methods show the opposite descriptive pattern: compaction exceeds re-grounding by $5.0$ points for trace rules and $2.5$ points for frozen recomputation, and trace judge ties. Figure~\ref{fig:recovery-pairs} shows every method under both operators. Neither intervening nor abstaining is uniformly best; the outcome depends on which monitor and recovery operator are paired.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.60\linewidth]{05-overall-recovery-success.png}\\[-0.5em]
-  \includegraphics[width=0.46\linewidth]{06-active-recovery-success.png}\\[-0.5em]
-  \includegraphics[width=0.58\linewidth]{07-passive-recovery-success.png}
-  \caption{Recovery results in the GPT-5.6 Luna $\times$ Evolving Intent deployment ($n=40$ paired source tasks per cell). \emph{Top:} equal-weighted outcome across six monitoring methods. \emph{Middle:} active recomputation under lossy compaction and deterministic re-grounding, with task-bootstrap $95\%$ intervals. \emph{Bottom:} selected passive monitors under the same two operators. Frozen quiz is excluded, firing rates are natural rather than matched, and BFCL recovery interventions were not evaluated.}
+  \includegraphics[width=0.95\linewidth]{01-recovery-operator-effects.png}
+  \caption{Recovery results in the GPT-5.6 Luna $\times$ Evolving Intent deployment
+  ($n=40$ paired source tasks per cell). Each row is a monitoring method; points are the
+  change in task success relative to monitored no-action under each recovery operator,
+  with paired task-bootstrap $95\%$ intervals. Active recomputation gains under
+  deterministic re-grounding and not under lossy compaction, while several passive and
+  baseline methods show the opposite or no ordering. Firing rates are natural rather than
+  matched, and BFCL recovery interventions were not evaluated.}
   \label{fig:recovery-pairs}
 \end{figure}
 
