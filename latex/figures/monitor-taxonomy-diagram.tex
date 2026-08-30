@@ -1,0 +1,34 @@
+% Three monitoring families, distinguished by what they read and whether they write.
+\begin{tikzpicture}[
+    font=\small,
+    box/.style={rounded corners=2pt, draw, minimum height=9mm, inner xsep=6pt, align=center},
+    lbl/.style={font=\scriptsize\itshape, text=black!60},
+    rd/.style={-{Stealth[length=2mm]}, thick},
+    wr/.style={-{Stealth[length=2mm]}, thick, dashed}
+  ]
+  \node[box, fill=agentblue!12, draw=agentblue, minimum width=30mm] (agent)
+       {agent\\{\scriptsize hidden state $\rightarrow$ visible trace}};
+
+  \node[box, above=11mm of agent, fill=probeviolet!12, draw=probeviolet, minimum width=32mm]
+       (internal) {internal probe\\{\scriptsize reads activations}};
+  \node[box, below left=11mm and 3mm of agent, fill=passiveteal!12, draw=passiveteal,
+        minimum width=32mm] (passive) {passive monitor\\{\scriptsize reads emitted trace}};
+  \node[box, below right=11mm and 3mm of agent, fill=sentinelorange!12, draw=sentinelorange,
+        minimum width=32mm] (active) {active monitor\\{\scriptsize writes into context}};
+
+  \draw[rd, draw=probeviolet] (agent.north) -- node[lbl, right] {read} (internal.south);
+  \draw[rd, draw=passiveteal] (agent.south west) -- node[lbl, left] {read} (passive.north east);
+  \draw[rd, draw=sentinelorange] (agent.south east) -- node[lbl, right, yshift=2mm] {read} (active.north west);
+  \draw[wr, draw=sentinelorange] (active.north) to[out=120, in=-20] node[lbl, right] {\textbf{write}} (agent.east);
+
+  \node[box, right=14mm of agent, fill=recoverygreen!12, draw=recoverygreen,
+        minimum width=26mm] (rec) {intervention\\+ recovery};
+  \foreach \n in {internal, passive, active}
+    \draw[rd, draw=black!35] (\n.east) -- ++(4mm,0) -- ++(0,0) |- (rec.west);
+  \draw[rd, draw=recoverygreen] (rec.north) to[out=110, in=30] (agent.north east);
+
+  \node[lbl, below=2mm of passive.south, anchor=north, text width=34mm, align=center]
+       {no trajectory contamination};
+  \node[lbl, below=2mm of active.south, anchor=north, text width=34mm, align=center]
+       {observation enters the trace};
+\end{tikzpicture}
