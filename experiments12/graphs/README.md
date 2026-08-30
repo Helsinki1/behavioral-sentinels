@@ -13,12 +13,12 @@ analysis artifacts.
 - `05-overall-recovery-success.png`: equal-weighted recovery success across six
   deployed methods on Evolving Intent.
 - `06-active-recovery-success.png`: active recomputation under deterministic
-  regrounding versus lossy compaction.
+  reconstruction versus lossy compaction.
 - `07-passive-recovery-success.png`: the same recovery comparison for Frozen
   recompute, Trace rules, and Trace judge.
 - `08-controlled-oracle-timing.png`: the GPT-OSS-20B controlled coding
   factorial, comparing no intervention with oracle-timed compaction and
-  re-grounding with and without a carried probe.
+  reconstruction with and without a carried probe.
 
 Recovery deployment covers GPT-5.6 Luna on 40 Evolving-Intent tasks only; BFCL
 recovery bars cannot be reported because Experiment 12 did not deploy recovery

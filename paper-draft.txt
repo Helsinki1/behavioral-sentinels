@@ -2,16 +2,16 @@ Title: When Does Monitoring Long-Horizon Agents Lead to Better Performance?
 
 Abstract
 
-Long-horizon language-model agents can experience performance degradation as their interaction histories grow and context accumulates in their agent state [1]. We study how well different monitoring methods predict agent degradation, and whether compacting or reconstructing agent state improves downstream task performance. Across conversational reasoning tasks (Evolving-Intent GSM8K [2]) and multi-turn tool-use tasks (BFCL Multi-Turn [3]), we compare “active” observational monitors, “passive” monitors, and baseline context- and time-based approaches. We find that monitoring is not a free observation: active probes can alter the trajectories they are intended to measure, producing an “observer effect” where task success tends to decrease. We further find that the value of an intervention depends on how the agent state is recovered: lossy LLM-generated compaction can substantially reduce performance, whereas deterministic reconstruction can avoid this penalty and, for some monitor pairings, improve success relative to no intervention. These results suggest a taxonomy in which observation method, signal quality, and recovery mechanism are evaluated jointly, rather than treating monitoring as a standalone prediction problem.
+Long-horizon language-model agents can experience performance degradation as their interaction histories grow and context accumulates in their agent state [1]. We study how well different monitoring methods predict agent degradation, and whether compacting or reconstructing agent state improves downstream task performance. Across conversational reasoning tasks (Evolving-Intent GSM8K [2]) and multi-turn tool-use tasks (BFCL Multi-Turn [3]), we compare “active” observational monitors, “passive” monitors, and baseline context- and time-based approaches. We find that monitoring is not a free observation: active probes can alter the trajectories they are intended to measure, producing an “observer effect” where task success tends to decrease. We further find that the value of monitoring depends on how agent state is recovered. In a controlled study, well-timed intervention while carrying a probe improves accuracy by 2.8 percentage points under lossy compaction but by 6.5 points under deterministic re-grounding. These results suggest a taxonomy in which observation method, signal quality, and recovery mechanism are evaluated jointly, rather than treating monitoring as a standalone prediction problem.
 
 
 Introduction
 
-Modern agentic workflows have seen drastically increasing adoption for long-horizon tasks that require maintaining goals, constraints, and context over an extended period of time (i.e deep research, coding, etc).[CITATION] As these trajectories grow longer, however, agents can gradually lose important context and start hallucinating incorrect information [CITATION]. A natural response is to monitor an agent during execution and intervene whenever its behavior starts to degrade. This can include restarting the agent compacting its context or simply restructuring state before the agent continues execution [CITATION(S)]. 
+Modern agentic workflows have seen increasing adoption for tasks such as software engineering, research, and multi-step tool use, where they must maintain goals, constraints, and state over extended trajectories.[CITATION] As these trajectories grow longer, however, agents can gradually lose important context and start hallucinating incorrect information [CITATION]. A natural response is to monitor an agent during execution and intervene whenever its behavior starts to degrade. This can include restarting the agent compacting its context or simply restructuring state before the agent continues execution [CITATION(S)]. 
 
 The need to preserve agent behavior creates an appealing intuition: if we can detect degradation earlier and more accurately, we should be able to intervene at better times and improve task performance. This has drastic implications for all agent tasks, whether it be coding benchmarks like (...) or enterprise (….). 
 
-Much of agent monitoring can thus be viewed as a prediction problem: given an agent current behavior/state, determine whether it is likely to fail in the near future. Under this view, a more accurate monitor should naturally produce a better agent, assuming better timing positively influences intervention.
+Much of agent monitoring can thus be viewed as a prediction problem: given an agent current behavior/state, determine whether it is likely to fail in the near future. Under this view, a more accurate monitor should naturally produce a better agent, if better timing does indeed improve intervention.
 
 [insert a conditional prob math thing here explaining the above notion, or can put in experimental setup]
 
@@ -23,11 +23,11 @@ We explore a method of monitoring that introduces additional instructions or com
 
 We study one such class of monitors, which we call behavioral sentinels: canaries that an agent must maintain throughout a task and whose degradation can serve as a warning signal. For example, an agent might be asked to remember and update a small piece of state while simultaneously completing its primary task. The intuition here is if the agent fails to maintain the state before completing the underlying task, the sentinel can provide an early warning signal.
 
-However, asking the agent to maintain such a signal can itself change the trajectory of an agent. Across our experiments, we find an “observer effect”: a probe cannot predict the degradation of an agent without playing some part in the degradation itself. Monitoring therefore is not always a free source of information, and higher quality signals do not automatically imply higher performance. 
+However, asking the agent to maintain such a signal can itself change the trajectory of an agent. Across our experiments, we find an “observer effect”: a probe tends to alter the very trajectory it is responsible for measuring. Monitoring therefore is not always a free source of information, and higher quality signals do not automatically imply higher performance. 
 
 Detecting degradations is useful because the resulting signal eventually triggers an intervention. Intuitively, this means the value of a monitor may depend not just on when it fires but what the system does afterwards. We study this interaction directly by evaluating monitoring under different recovery mechanisms. Specifically, to answer the question of whether the effect of monitoring depends on the recovery mechanism it is paired with, we compare recovery based on agent-generated context compaction with recovery that reconstructs state from an external source of truth. 
 
-Our experiments reveal that under lossy-agent generated compaction, carrying additional state can reduce the benefit of an otherwise well-timed intervention. However, when the state is reconstructed through deterministic regrounding, this penalty disappears and the monitoring setup can be beneficial. 
+Our experiments reveal that under lossy-agent generated compaction, carrying additional state can reduce the benefit of an otherwise well-timed intervention. However, when the state is reconstructed through deterministic reconstruction, this penalty disappears and the monitoring setup can be beneficial. 
 
 Our work makes three primary contributions: 
 We characterize monitoring as both active and passive, rather than a free observation. Active behavioral probes alter trajectories, producing an observer effect
@@ -43,8 +43,10 @@ Recent work has explored detecting degradation on agents before task completion
 
 Other work has introduced explicit diagnostic probes: [Canary Tools], for example, inserts adversarially designed tools into an agent’s context to expose weaknesses in tool-selection reasoning. 
 
-The Intervention Paradox paper?
-Add a couple more works if convenient
+[Accurate Failure Prediction in Agents Does Not Imply Effective Failure Prevention] further
+shows that accurate timing of failure prediction by itself does not imply effective prevention.
+
+[Agentic Uncertainty Quantification] takes a complementary approach by estimating uncertainty throughout an agent trajectory and using it to control uncertainty-aware memory and targeted reflection. This couples detection and intervention, while leaving open how the monitoring mechanism and post-intervention state representation jointly affect end-to-end performance, which we explicitly address. 
 
 Together, these methods show us that agent failure can often be detected before task completion, whether it be internal representations, observing trajectories, or introducing probes, but whether that leads to genuine performance improvement is still unclear.
 
@@ -72,50 +74,76 @@ Intervention policy: when does the system act on that signal?
 Recovery mechanism: how is agent state reconstructed after intervention?
 3.1 Controlled mechanism study
 We first study the monitoring recovery interaction under controlled conditions using GPT-OSS-20B on long-horizon coding, register-tracking, and bAbI-style tasks. These environments require intermediate progress to persist in agent state across multiple turns and allow us to identify when task performance begins to degrade.
-Our primary active monitors are behavioral sentinels that require information that cannot simply be copied from the model's previous response. Accordingly, we construct probes whose correct response must be recomputed from the current state.[include examples] Failure to maintain the sentinel provides a possible signal of underlying degradation.
+Our primary active monitors are behavioral sentinels that require information that cannot simply be copied from the model's previous response. Accordingly, we construct probes whose correct response must be recomputed from the current state. For example, a probe can require an arithmetic check derived from values in the current turn. Failure to maintain the sentinel provides a possible signal of underlying degradation.
 Because these probes are carried directly inside the agent's context, observing the agent may itself change the trajectory being measured. We therefore compare otherwise identical trajectories with and without a carried probe.
 Intervention timing
-To separate monitor quality from the potential value of acting at the correct time, we compare trajectories with no intervention against trajectories receiving an oracle-timed intervention. Oracle timing uses knowledge of subsequent task degradation and is not intended as a deployable monitor. Instead, it provides a controlled estimate of the maximum performance that could be gained from favorable intervention timing. 
+To separate monitor quality from the value of acting at the correct time, we compare trajectories with no intervention against trajectories receiving an oracle-timed intervention. Oracle timing uses knowledge of subsequent task degradation and is not intended as a deployable monitor. Instead, it provides a controlled estimate of the maximum performance that could be gained from favorable intervention timing. 
+To create the Oracle ground truth for our coding tasks, we use a deterministic checker to label each turn as correct or hallucinated. The checker parses the agent-emitted Python and compares each requested function definition and reported signature against the task’s authoritative symbol table; it also detects invalid syntax, missing required definitions or calls, invented symbols, and incorrect claims that a function exists or was deleted. A turn is labeled correct only if none of these checks finds an error. The oracle intervenes immediately before the first turn labeled as hallucinated. If no hallucination occurs, it does not intervene.
 
 
 No intervention
 Oracle-timed intervention
 No carried probe
-AA
-BB
+A
+B
 Carried probe
-CC
-DD
+C
+D
 
 We repeat the intervention conditions under two recovery mechanisms:
 Agent-generated compaction asks the model to compress its accumulated context into a shorter representation before continuing execution. Because recovery depends on the model's existing trajectory, information that has already been forgotten, distorted, or deprioritized may not survive compaction.
 External re-grounding instead reconstructs the relevant task state deterministically from an external source of truth[include example]. It does not depend on what information the model itself retained immediately before intervention.
-Because no recovery occurs in conditions AA or CC, these conditions are shared across operators. The recovery mechanism affects only the intervention conditions BB and DD.
-For recovery operator RR, we measure whether carrying a probe changes the value of an otherwise well-timed intervention:
+Before running the re-grounding condition, we pre-specified our prediction and fixed the task set, thresholds, exclusions, and sample size. We predicted that external re-grounding would reduce the additional cost of carrying the probe. . 
+Because no recovery occurs in conditions A or C, these conditions are shared across operators. The recovery mechanism affects only the intervention conditions B and D.
+For recovery operator R, we measure whether carrying a probe changes the value of an otherwise well-timed intervention:
 Δinteraction,R=[P(D∣R)−P(C)]−[P(B∣R)−P(A)].\Delta_{\mathrm{interaction},R} = [P(D\mid R)-P(C)] - [P(B\mid R)-P(A)].
 3.2 Deployment-oriented evaluation
-The controlled study is designed to isolate mechanisms, but it does not capture the full conditions of deployed agent monitoring. So we conduct a second set of experiments on BFCL Multi-Turn and Evolving Intent GSM8K using DeepSeek V4 Flash, GPT-OSS-120B, GPT-5.6 Luna, and GPT-5.6 Terra.
-Here, monitors operate online and must determine when intervention occurs without oracle timing.
-We distinguish between monitors that directly interact with the agent during execution and monitors that observe the trajectory without modifying it. 
+The controlled study is designed to isolate mechanisms, but it does not capture the full conditions of deployed agent monitoring. We conduct a second set of experiments on BFCL Multi-Turn and Evolving Intent GSM8K using DeepSeek V4 Flash, GPT-OSS-120B, GPT-5.6 Luna, and GPT-5.6 Terra. 
+Here, monitors determine when intervention occurs without oracle timing. We distinguish between monitors that directly interact with the agent during execution (“active”) and monitors that observe the trajectory without modifying it (“passive”). 
 Active monitors introduce additional instructions or state directly into the agent's context. Passive or zero-carry monitors obtain a signal without persisting additional monitoring state in the agent's trajectory. These include trace-based monitoring and forked evaluation strategies. 
-We evaluate these monitoring strategies under four post-intervention conditions:
-no recovery,
-LLM-generated context compaction,
-deterministic public-state re-grounding, and
-a bounded quote-only WATCH note.
-
-Unlike the controlled mechanism study, monitoring methods act at their natural firing times in this setting. Intervention rates are not forced to match across methods, although each policy is limited to at most one intervention per task. We report intervention incidence alongside task success to distinguish differences in recovery quality from differences in how frequently a monitoring policy acts.
+We evaluate these monitoring strategies under three post-intervention conditions:
+No intervention
+LLM-generated context compaction
+Deterministic reconstruction
+In our study, the “compaction” intervention approach asks the agent to summarize its current stored state in a more succinct form. We then erase the stored state and continue from the task instructions and this model-written summary. 
+The “reconstruction” approach also starts a fresh trace, but it rebuilds state from records maintained by a harness outside the agent’s context. These records contain only the original instructions and public task information observed so far, not the agent’s memory, and encourages the agent to re-retrieve the context it needs from its workspace. 
+Unlike the controlled mechanism study, monitoring methods act at their natural firing times in this setting. Intervention rates are not forced to match across methods, although each policy is limited to at most one intervention per task. We report intervention incidence alongside task success to distinguish differences in recovery quality from differences in how frequently a monitoring policy acts. 
 3.3 Evaluation metrics and protocol
 We evaluate each monitoring system at two levels.
 Monitoring quality. We report precision, recall, and area under the precision-recall curve (AUPRC) to measure how well a signal identifies subsequent task degradation.
 End-to-end utility. We measure final task success, intervention frequency, token usage, latency, and monetary cost where available. These metrics capture whether a monitoring signal actually improves the complete agent system rather than just predicting failure accurately.
 
- 
-
-Results
-
-
-Discussion / Conclusion
+4. Results
+4.1 No monitoring method consistently provides the best signal
+[Figure: Precision, recall, and AUPRC across monitors, models, and tasks.]
+We first compare how well each monitoring method predicts agent degradation. Adjusted for firing rates, no single method consistently performs best across models and tasks. Active recomputation achieves the highest AUPRC in three of seven model-task settings, while passive or baseline methods lead in the remaining four.
+The strongest individual signal occurs on BFCL with GPT-OSS-120B, where active recomputation reaches an AUPRC of 0.942. However, this monitor also illustrates an important tradeoff between precision and recall: it achieves a precision of 1.00 but a recall of only 0.20. Its alarms are highly reliable when they occur, but most failures occur without an alarm.
+Overall, signal quality is highly setting-dependent. A monitoring strategy that performs well for one model or benchmark does not necessarily remain the strongest in another.
+4.2 Active monitoring can change the trajectory it observes
+[Figure: Change in task success between clean and actively monitored trajectories.]
+Signal quality alone does not capture the cost of obtaining that signal. We therefore compare active-recomputation trajectories with clean baseline trajectories to determine whether introducing the probe changes task performance.
+Six of seven settings show a negative change in task success when active monitoring is introduced, with three decreases statistically significant. The largest effect occurs for DeepSeek V4 on Evolving Intent, where success decreases by 25.0 percentage points. GPT-5.6 Luna on Evolving Intent is the only setting with a positive point estimate, increasing by 3.6 points, although this effect is not statistically significant.
+These results provide evidence of an “observer effect”: active probes can negatively impact the trajectories they are intended to measure. This creates a distinction between a monitor's predictive quality and its actual effect on the agent. A monitor may provide useful information about degradation while simultaneously changing the probability that the underlying task succeeds.
+4.3 The value of good intervention timing depends on recovery
+[Figure: Oracle-timed intervention with and without a carried probe under compaction and deterministic re-grounding.]
+We next ask whether there is meaningful performance value in intervening at the right time, independently of whether a deployable monitor can identify that moment.
+In the controlled coding experiment, oracle-timed intervention substantially improves performance when no probe is carried. Accuracy increases from 0.849 with no intervention to 0.908 with compaction and 0.912 with deterministic re-grounding. This establishes that favorable intervention timing provides real performance headroom.
+However, the amount of this headroom changes when monitoring state is carried through the trajectory. Under compaction, accuracy rises only from 0.823 to 0.851. The benefit of oracle timing therefore falls from 5.9 percentage points without the probe to 2.8 points with it, corresponding to an interaction of −3.2 percentage points.
+When we keep the monitoring condition fixed but replace compaction with deterministic re-grounding, this interaction disappears. With the carried probe, oracle-timed re-grounding raises accuracy from 0.823 to 0.888. The interaction becomes approximately +0.1 percentage points.
+This is the central controlled finding of our study. The effect of carrying a monitor is not independent of what happens after intervention. Under lossy compaction, the monitor reduces the value that can be extracted from favorable timing. Under deterministic re-grounding, that additional penalty largely disappears.
+4.4 End-to-end performance depends on the monitor–recovery pair
+[Figure: End-to-end task success for each monitor–recovery pairing.]
+Finally, we examine whether this dependence persists when monitors fire naturally rather than using oracle timing.
+Across six monitoring methods on GPT-5.6 Luna and 40 Evolving Intent tasks, deterministic re-grounding achieves an average task success rate of 75.0%. This compares with 74.6% for the WATCH condition, 72.9% when monitoring triggers no state recovery, and 59.6% under LLM-generated compaction.
+The aggregate averages, however, hide substantial differences between monitoring methods. Active recomputation reaches 72.5% success when paired with compaction but 85.0% when paired with deterministic re-grounding. Other monitors do not follow the same ordering. Trace rules perform 5.0 percentage points better with compaction, Frozen recompute performs 2.5 points better with compaction, and Trace judge performs equally under the two recovery mechanisms.
+The deployment results therefore do not support a single globally best monitor or recovery strategy. Instead, performance depends on how the two are paired. A recovery mechanism that improves one monitoring strategy may provide little benefit, or even perform worse, with another.
+It is important to note, however, monitoring methods fire at their natural rates, so intervention frequency is not matched across conditions, although each policy is limited to at most one intervention per task. The study is also limited to 40 Evolving Intent tasks and is sensitive to task inclusion. We therefore treat the exact ranking of individual monitor-recovery pairs as preliminary, while using the controlled experiment above as the stronger evidence for the monitoring-recovery interaction.
+Discussion and Conclusion
+Our results suggest that runtime monitoring for long-horizon agents is better understood as a systems problem than as a standalone prediction problem. Predictive metrics such as precision, recall, and AUPRC describe how well a monitor identifies degradation, but they do not capture what the monitor changes while observing the agent or what happens after its signal triggers an intervention. In our experiments, both of these factors matter. An important open question is what determines whether an active monitor hurts, helps, or leaves task performance unchanged. Properties such as model capability, task structure, context pressure, and the amount of additional monitoring state may all play a role.
+This points toward a broader design question for agent runtimes: rather than asking only whether an agent is likely to fail, a monitoring system may need to ask whether intervening now is actually preferable to continuing. That decision depends on both the likelihood and cost of failure and the expected quality and cost of the available recovery mechanism. A reliable, inexpensive reconstruction strategy may justify frequent intervention, while a lossy recovery operator may require much stronger evidence before resetting the agent. 
+Several limitations in our experiments motivate further study. Our cleanest controlled evidence comes from synthetic long-horizon tasks, while the deployment recovery study is limited to GPT-5.6 Luna on 40 Evolving Intent tasks. Monitoring methods also fire at their natural rates rather than under matched intervention budgets, making the deployment comparisons descriptive rather than fully controlled. A key next step is therefore to reproduce the monitoring-recovery interaction on realistic coding and tool-use benchmarks across additional models while matching intervention frequency. Future work should also evaluate a broader spectrum of recovery mechanisms, including checkpoints, partial reconstruction, structured external memory, and hybrid approaches that combine model-generated summaries with externally maintained state.
+Finally, our deterministic reconstruction experiments assume that the external state is reliable. Real agent systems may instead operate with stale, incomplete, or inconsistent state. Varying reconstruction quality would help determine when external re-grounding remains preferable to compaction and whether there is a threshold the benefits of monitoring begin to disappear. 
+More generally, understanding how observation cost, signal quality, intervention timing, and recovery accuracy interact may be necessary to predict whether a monitor will actually improve an agent system.
 
 References
 

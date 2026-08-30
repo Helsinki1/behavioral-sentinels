@@ -22,18 +22,13 @@
   \node[probe] (probe) at (6.30,-0.86) {Probe response};
 
   \draw[->, line width=0.72pt, agentblue] (task.east) -- ++(0.52,0)
-    |- node[pos=0.22, above, text=black!68] {task instruction} (agent.north west);
+    |- (agent.north west);
   \draw[->, line width=0.72pt, sentinelorange!90!black] (sentinel.east) -- ++(0.52,0)
-    |- node[pos=0.22, below, text=black!68] {carried instruction} (agent.south west);
+    |- (agent.south west);
   \draw[->, line width=0.72pt, recoverygreen!85!black] (agent.north east) -- ++(0.55,0)
-    |- node[pos=0.76, above, text=black!68] {primary behavior} (answer.west);
+    |- (answer.west);
   \draw[->, line width=0.72pt, sentinelorange!90!black] (agent.south east) -- ++(0.55,0)
-    |- node[pos=0.76, below, text=black!68] {monitor signal} (probe.west);
-
-  \draw[->, dashed, line width=0.7pt, warningred]
-    (probe.south) to[out=-115,in=-25]
-    node[below, align=center, text=warningred] {persists in context\\and changes later behavior}
-    (agent.south east);
+    |- (probe.west);
 
   \begin{scope}[on background layer]
     \node[fit=(sentinel)(agent)(probe), rounded corners=7pt, fill=sentinelorange!3,

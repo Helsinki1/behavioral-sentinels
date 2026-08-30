@@ -556,7 +556,7 @@ def overall_recovery_figure() -> str:
     labels = {
         "none": ("Monitored", "no state action"),
         "lossy_compaction": ("Lossy", "compaction"),
-        "public_state_reground": ("Deterministic", "regrounding"),
+        "public_state_reground": ("Deterministic", "reconstruction"),
         "good_bad_watch_feedback": ("Quote-only", "WATCH note"),
     }
     colors = {
@@ -602,14 +602,14 @@ def active_recovery_figure() -> str:
     order = sorted(operators, key=lambda operator: -float(rows[("active_recompute", operator)]["mean"]))
     labels = {
         "lossy_compaction": ("Lossy", "compaction"),
-        "public_state_reground": ("Deterministic", "regrounding"),
+        "public_state_reground": ("Deterministic", "reconstruction"),
     }
     colors = {"lossy_compaction": "#d55e00", "public_state_reground": "#0072b2"}
     width, height = 1200, 820
     left, right, top, bottom = 150, 70, 225, 680
     body: list[str] = [
         text(55, 58, "Active monitoring: recovery choice changes success", size=38, weight=700),
-        text(55, 101, "Active recomputation paired with deterministic regrounding or lossy compaction", size=24, fill="#536679"),
+        text(55, 101, "Active recomputation paired with deterministic reconstruction or lossy compaction", size=24, fill="#536679"),
         text(55, 141, "GPT-5.6 Luna × Evolving Intent; n = 40 paired source tasks per cell", size=21, fill="#536679"),
         text(width - 55, 183, "BFCL recovery interventions were not evaluated", size=20, anchor="end", weight=600, fill="#a14300"),
     ]
@@ -638,7 +638,7 @@ def active_recovery_figure() -> str:
         first, second = labels[operator]
         body.append(text(center, bottom + 43, first, size=23, weight=600, anchor="middle"))
         body.append(text(center, bottom + 73, second, size=23, weight=600, anchor="middle"))
-    body.append(text(width - 55, height - 30, "Descriptive difference: +12.5 percentage points for regrounding", size=21, anchor="end", weight=600, fill="#334e68"))
+    body.append(text(width - 55, height - 30, "Descriptive difference: +12.5 percentage points for reconstruction", size=21, anchor="end", weight=600, fill="#334e68"))
     return svg(width, height, body, description="Active-monitor deployment success under two recovery operators")
 
 
@@ -655,8 +655,8 @@ def passive_recovery_figure() -> str:
     left, right, top, bottom = 155, 70, 230, 690
     body: list[str] = [
         text(55, 58, "Selected passive monitors show a different descriptive pattern", size=38, weight=700),
-        text(55, 101, "Lossy compaction matches or exceeds deterministic regrounding for these methods", size=24, fill="#536679"),
-        text(55, 141, "GPT-5.6 Luna × Evolving Intent; n = 40 paired source tasks per cell; sorted by compaction − regrounding", size=21, fill="#536679"),
+        text(55, 101, "Lossy compaction matches or exceeds deterministic reconstruction for these methods", size=24, fill="#536679"),
+        text(55, 141, "GPT-5.6 Luna × Evolving Intent; n = 40 paired source tasks per cell; sorted by compaction − reconstruction", size=21, fill="#536679"),
         text(width - 55, 183, "BFCL recovery interventions were not evaluated", size=20, anchor="end", weight=600, fill="#a14300"),
     ]
     ymap = draw_success_axis(
@@ -682,12 +682,12 @@ def passive_recovery_figure() -> str:
             body.append(rect(center + offset - bar_width / 2, ymap(value), bar_width, bottom - ymap(value), fill=color, rx=5))
             body.append(text(center + offset, ymap(value) - 12, f"{value * 100:.1f}", size=20, weight=700, anchor="middle"))
         body.append(text(center, bottom + 48, METHOD_LABELS[method], size=22, weight=600, anchor="middle"))
-        body.append(text(center, bottom + 78, f"compaction − regrounding: {difference[method] * 100:+.1f} pp", size=18, anchor="middle", fill="#536679"))
+        body.append(text(center, bottom + 78, f"compaction − reconstruction: {difference[method] * 100:+.1f} pp", size=18, anchor="middle", fill="#536679"))
     legend_y = height - 28
     body.append(rect(55, legend_y - 17, 28, 20, fill="#d55e00", rx=3))
     body.append(text(95, legend_y, "Lossy compaction", size=19, fill="#334e68"))
     body.append(rect(285, legend_y - 17, 28, 20, fill="#0072b2", rx=3))
-    body.append(text(325, legend_y, "Deterministic regrounding", size=19, fill="#334e68"))
+    body.append(text(325, legend_y, "Deterministic reconstruction", size=19, fill="#334e68"))
     body.append(text(width - 55, legend_y, "Point estimates are descriptive; Trace judge ties", size=19, anchor="end", fill="#536679"))
     return svg(width, height, body, description="Selected passive-monitor deployment success under two recovery operators")
 
@@ -703,7 +703,7 @@ def controlled_oracle_figure(source: Mapping[str, object]) -> str:
     labels = {
         "no_intervention": ("No", "intervention"),
         "oracle_compaction": ("Oracle +", "compaction"),
-        "oracle_regrounding": ("Oracle +", "regrounding"),
+        "oracle_regrounding": ("Oracle +", "reconstruction"),
     }
     colors = {
         "no_intervention": "#67788a",
@@ -749,7 +749,7 @@ def controlled_oracle_figure(source: Mapping[str, object]) -> str:
         body.append(text(center, top - 22, group_label, size=24, weight=700, anchor="middle"))
         if group_index == 0:
             body.append(line((group_centers[0] + group_centers[1]) / 2, top - 5, (group_centers[0] + group_centers[1]) / 2, bottom + 92, stroke="#c8d1da", stroke_width=2))
-    body.append(text(55, height - 27, "monitor × recovery interaction: compaction −3.2 pp; regrounding +0.1 pp", size=20, weight=600, fill="#334e68"))
+    body.append(text(55, height - 27, "monitor × recovery interaction: compaction −3.2 pp; reconstruction +0.1 pp", size=20, weight=600, fill="#334e68"))
     return svg(width, height, body, description="Controlled oracle-timing success with and without a carried probe under two recovery mechanisms")
 
 
